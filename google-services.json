@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "560218164561",
+    "project_id": "promptly-trycatch",
+    "storage_bucket": "promptly-trycatch.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:560218164561:android:805c5f29c24c4c2d82d770",
+        "android_client_info": {
+          "package_name": "com.example.promptly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB13UiCdekIvzsP_dzd1y2IGDH11gBN0-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

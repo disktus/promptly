@@ -19,9 +19,10 @@ public class FirebaseSeeder {
     public void seed() {
         seedUsers();
         seedQuestions();
+        seedEvaluations();
     }
 
-    // user
+    // users
     private void seedUsers() {
         createUser("user1", "user1");
         createUser("user2", "user2");
@@ -58,16 +59,39 @@ public class FirebaseSeeder {
         db.collection("questions").document(docId).set(q);
     }
 
-    // 점수, 순위 관리
+    // 샘플 점수
+    private void seedEvaluations() {
+        // user1 평가
+        createEvaluation("user1", "q1", 17, 16, 15, 18, 18); // 총합 84
+        createEvaluation("user1", "q2", 15, 14, 16, 17, 15); // 총합 77
+        createEvaluation("user1", "q3", 18, 17, 18, 16, 17); // 총합 86
 
-    /**
-     * 유저가 문제 푼 후 호출
-     * - attempt 증가
-     * - totalScore 갱신
-     * - attemptRank / scoreRank 갱신
-     */
+        // user2 평가
+        createEvaluation("user2", "q1", 14, 15, 13, 14, 16); // 총합 72
+        createEvaluation("user2", "q2", 16, 16, 15, 15, 15); // 총합 77
+    }
+
+    private void createEvaluation(String userId, String questionId,
+                                  int clarity, int specificity, int logic,
+                                  int creativity, int context) {
+        Map<String, Object> eval = new HashMap<>();
+        eval.put("userId", userId);
+        eval.put("questionId", questionId);
+        eval.put("clarity", clarity);
+        eval.put("specificity", specificity);
+        eval.put("logic", logic);
+        eval.put("creativity", creativity);
+        eval.put("context", context);
+        eval.put("totalScore", clarity + specificity + logic + creativity + context);
+
+        db.collection("evaluations").add(eval);
+
+        // 평가 후 자동으로 유저 점수 갱신
+        incrementAttemptAndScore(userId, clarity + specificity + logic + creativity + context);
+    }
+
+    // 점수, 순위 관리
     public void incrementAttemptAndScore(String userId, int newScore) {
-        // 1) attempt 증가
         db.collection("users").document(userId).get().addOnSuccessListener(document -> {
             if (!document.exists()) return;
 
@@ -82,14 +106,12 @@ public class FirebaseSeeder {
 
             db.collection("users").document(userId).update(updates)
                     .addOnSuccessListener(aVoid -> {
-                        // 2) 순위 갱신
                         updateAttemptRank();
                         updateScoreRank();
                     });
         });
     }
 
-    // 순위 계산
     private void updateAttemptRank() {
         db.collection("users")
                 .orderBy("attempt", Query.Direction.DESCENDING)

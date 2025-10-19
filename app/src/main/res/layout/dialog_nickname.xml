@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_black"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center_horizontal">   <!-- ▶ 내부 컨텐츠 가로 가운데 -->
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이름을 입력하세요"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/etNickname"
+        android:layout_width="240dp"
+        android:layout_height="40dp"
+        android:hint="한글, 영어, 숫자만 가능"
+        android:background="@drawable/bg_input_white"
+        android:paddingHorizontal="12dp"
+        android:inputType="textPersonName"
+        android:layout_gravity="center_horizontal"/>  <!-- ▶ 입력칸도 가운데 -->
+
+    <!-- 버튼 줄: 폭을 wrap_content로 하고 가운데 정렬 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnOk"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:minWidth="72dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="OK"
+        android:textAllCaps="false"
+        android:textColor="@android:color/black"
+        app:backgroundTint="@android:color/white"
+        app:cornerRadius="18dp"/>
+    </LinearLayout>
+</LinearLayout>

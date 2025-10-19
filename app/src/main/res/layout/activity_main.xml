@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/tvLogo"
+        android:layout_width="200dp"
+        android:layout_height="80dp"
+        android:text="어플 로고"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:background="@drawable/bg_logo_box" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="16dp"/>
+
+    <!-- 폭을 글자에 맞추고, 패딩을 줍니다 -->
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="START"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@android:color/black"
+        android:visibility="gone"/>
+</LinearLayout>

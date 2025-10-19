@@ -22,7 +22,7 @@ public class FirebaseSeeder {
         seedEvaluations();
     }
 
-    // users
+    // 유저
     private void seedUsers() {
         createUser("user1", "user1");
         createUser("user2", "user2");
@@ -40,7 +40,7 @@ public class FirebaseSeeder {
         db.collection("users").document(docId).set(user);
     }
 
-    // questions
+    // 문제
     private void seedQuestions() {
         createQuestion("q1", "학교 과제 제출", "대학생", "보고서", "객관적/논리적", "보고서");
         createQuestion("q2", "주말 요리", "홈셰프", "레시피", "간단하게", "요리");

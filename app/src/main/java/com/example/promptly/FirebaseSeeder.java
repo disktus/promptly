@@ -17,27 +17,47 @@ public class FirebaseSeeder {
     }
 
     public void seed() {
-        seedUsers();
+        seedUsersAndEvaluations();
         seedQuestions();
-        seedEvaluations();
     }
 
-    // 유저
-    private void seedUsers() {
-        createUser("user1", "user1");
-        createUser("user2", "user2");
+    // 유저 생성 + 샘플 평가
+    private void seedUsersAndEvaluations() {
+        // Alice 생성
+        createUser("Alice", userId -> {
+            // Alice 샘플 평가
+            createEvaluation(userId, "q1", 17, 16, 15, 18, 18); // 총합 84
+            createEvaluation(userId, "q2", 15, 14, 16, 17, 15); // 총합 77
+            createEvaluation(userId, "q3", 18, 17, 18, 16, 17); // 총합 86
+        });
+
+        // Bob 생성
+        createUser("Bob", userId -> {
+            // Bob 샘플 평가
+            createEvaluation(userId, "q1", 14, 15, 13, 14, 16); // 총합 72
+            createEvaluation(userId, "q2", 16, 16, 15, 15, 15); // 총합 77
+        });
     }
 
-    private void createUser(String docId, String nickname) {
+    // 콜백 인터페이스
+    interface UserIdCallback {
+        void onUserCreated(String userId);
+    }
+
+    // 유저 생성 메서드
+    private void createUser(String nickname, UserIdCallback callback) {
         Map<String, Object> user = new HashMap<>();
         user.put("nickname", nickname);
-        user.put("solvedCount", 0);    // 푼 문제 수
-        user.put("attempt", 0);        // 문제 푼 횟수
-        user.put("attemptRank", 0);    // 푼 횟수 기준 순위
-        user.put("totalScore", 0);     // 총점
-        user.put("scoreRank", 0);      // 점수 기준 순위
+        user.put("solvedCount", 0);
+        user.put("attempt", 0);
+        user.put("attemptRank", 0);
+        user.put("totalScore", 0);
+        user.put("scoreRank", 0);
 
-        db.collection("users").document(docId).set(user);
+        db.collection("users").add(user).addOnSuccessListener(documentReference -> {
+            String userId = documentReference.getId();
+            callback.onUserCreated(userId);
+        });
     }
 
     // 문제
@@ -59,21 +79,12 @@ public class FirebaseSeeder {
         db.collection("questions").document(docId).set(q);
     }
 
-    // 샘플 점수
-    private void seedEvaluations() {
-        // user1 평가
-        createEvaluation("user1", "q1", 17, 16, 15, 18, 18); // 총합 84
-        createEvaluation("user1", "q2", 15, 14, 16, 17, 15); // 총합 77
-        createEvaluation("user1", "q3", 18, 17, 18, 16, 17); // 총합 86
-
-        // user2 평가
-        createEvaluation("user2", "q1", 14, 15, 13, 14, 16); // 총합 72
-        createEvaluation("user2", "q2", 16, 16, 15, 15, 15); // 총합 77
-    }
-
+    // 평가
     private void createEvaluation(String userId, String questionId,
                                   int clarity, int specificity, int logic,
                                   int creativity, int context) {
+        int total = clarity + specificity + logic + creativity + context;
+
         Map<String, Object> eval = new HashMap<>();
         eval.put("userId", userId);
         eval.put("questionId", questionId);
@@ -82,12 +93,12 @@ public class FirebaseSeeder {
         eval.put("logic", logic);
         eval.put("creativity", creativity);
         eval.put("context", context);
-        eval.put("totalScore", clarity + specificity + logic + creativity + context);
+        eval.put("totalScore", total);
 
         db.collection("evaluations").add(eval);
 
-        // 평가 후 자동으로 유저 점수 갱신
-        incrementAttemptAndScore(userId, clarity + specificity + logic + creativity + context);
+        // 평가 후 유저 점수 갱신
+        incrementAttemptAndScore(userId, total);
     }
 
     // 점수, 순위 관리

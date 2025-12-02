@@ -1,6 +1,8 @@
 package com.example.promptly;
 
-import android.app.Dialog;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,89 +29,57 @@ public class MainTestActivity extends AppCompatActivity {
     EditText[] etAnswers = new EditText[5];
     Button[] btnSubmits = new Button[5];
 
-    int[] questionIds = {
-            R.id.mainQuestion1,
-            R.id.mainQuestion2,
-            R.id.mainQuestion3,
-            R.id.mainQuestion4,
-            R.id.mainQuestion5
-    };
+    TextView tvCountdown;
+
+    // ===== Timer =====
+    private static final long REFRESH_INTERVAL = 12 * 60 * 60 * 1000; // 12시간
+    Handler handler = new Handler();
+
+    // ===== SharedPreferences =====
+    SharedPreferences timePref;
+    SharedPreferences submitPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_maintest);
 
-        setupQuestionViews();
+        timePref = getSharedPreferences("main_test_time", MODE_PRIVATE);
+        submitPref = getSharedPreferences("main_test_submit", MODE_PRIVATE);
+
+        tvCountdown = findViewById(R.id.tvCountdown);
+
+        setupViews();
+        setupSubmitButtons();
+
         loadQuestionsFromDB();
+        startCountdownTimer();
     }
 
-    // --------------------------------
-    // question_layout 5개 연결
-    // --------------------------------
-    private void setupQuestionViews() {
+    // 문제 5개 뷰 연결
+    private void setupViews() {
+        int[] ids = {R.id.q1, R.id.q2, R.id.q3, R.id.q4, R.id.q5};
 
         for (int i = 0; i < 5; i++) {
-            View qView = findViewById(questionIds[i]);
+            View v = findViewById(ids[i]);
 
-            tvTitles[i] = qView.findViewById(R.id.tvQuestionTitle);
-            tvConditions[i] = qView.findViewById(R.id.tvConditions);
-            etAnswers[i] = qView.findViewById(R.id.etAnswer);
-
-            // 제출 버튼 동적 추가
-            Button submitBtn = new Button(this);
-            submitBtn.setText("제출");
-            ((android.widget.LinearLayout) qView).addView(submitBtn);
-            btnSubmits[i] = submitBtn;
-
-            int finalI = i;
-            submitBtn.setOnClickListener(v -> {
-                String userAnswer = etAnswers[finalI].getText().toString();
-                handleSubmit(userAnswer, finalI);
-            });
+            tvTitles[i] = v.findViewById(R.id.tvQuestionTitle);
+            tvConditions[i] = v.findViewById(R.id.tvConditions);
+            etAnswers[i] = v.findViewById(R.id.etAnswer);
+            btnSubmits[i] = v.findViewById(R.id.btnSubmitOne);
         }
     }
 
-    // --------------------------------
-    // 제출 처리 (프론트엔드 전용)
-    // --------------------------------
-    private void handleSubmit(String userAnswer, int index) {
+    // Firestore에서 5문제 랜덤 로딩 + 12시간 체크
+    private void loadQuestionsFromDB() {
 
-        if (userAnswer.trim().isEmpty()) {
-            showFeedbackDialog("프롬프트를 입력해주세요!");
+        long lastTime = timePref.getLong("last_refresh_time", 0);
+        long now = System.currentTimeMillis();
+
+        // 12시간 안 지났으면 새로 뽑지 않음
+        if (now - lastTime < REFRESH_INTERVAL) {
             return;
         }
-
-        // 1. 로딩 다이얼로그 표시
-        Dialog loadingDialog = showLoadingDialog();
-
-        // 2. TODO: 여기서 서버로 채점용 프롬프트 + 정답 전송 예정
-        /*
-           TODO BACKEND:
-           - 문제 조건 + 사용자 프롬프트 전송
-           - ChatGPT 채점 요청
-           - DB 저장 요청
-         */
-
-        // 3. 지금은 2초 뒤 더미 피드백 표시
-        new Handler().postDelayed(() -> {
-            loadingDialog.dismiss();
-
-            // 더미 피드백
-            String fakeFeedback =
-                    "\uD83C\uDF31 전체 구조는 잘 작성되었습니다!\n" +
-                            "✍️ 역할 지정이 조금 더 구체적이면 좋아요.\n" +
-                            "✨ 출력 조건을 명확하게 하면 더 좋은 결과를 얻을 수 있어요!";
-
-            showFeedbackDialog(fakeFeedback);
-
-        }, 2000);
-    }
-
-    // --------------------------------
-    // Firestore 랜덤 문제 5개 로드
-    // --------------------------------
-    private void loadQuestionsFromDB() {
 
         db.collection("questions")
                 .get()
@@ -119,6 +90,8 @@ public class MainTestActivity extends AppCompatActivity {
                     for (var doc : result) {
                         list.add(doc.getData());
                     }
+
+                    if (list.size() < 5) return;
 
                     Collections.shuffle(list);
 
@@ -136,37 +109,102 @@ public class MainTestActivity extends AppCompatActivity {
                                         "스타일: " + q.get("style");
 
                         tvConditions[i].setText(cond);
+
+                        enableQuestion(i);
                     }
+
+                    // 시간 / 제출 상태 초기화
+                    timePref.edit().putLong("last_refresh_time", now).apply();
+                    submitPref.edit().clear().apply();
                 });
     }
 
-    // --------------------------------
-    // 피드백 다이얼로그
-    // --------------------------------
-    private void showFeedbackDialog(String feedback) {
+    // --------------------------------------------------
+    // 제출 버튼 로직
+    // --------------------------------------------------
+    private void setupSubmitButtons() {
 
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.feedback_dialog);
+        for (int i = 0; i < 5; i++) {
+            final int index = i;
 
-        TextView tvFeedback = dialog.findViewById(R.id.tvFeedback);
-        Button btnClose = dialog.findViewById(R.id.btnClose);
+            boolean submitted = submitPref.getBoolean("submitted_" + index, false);
+            if (submitted) disableQuestion(index);
 
-        tvFeedback.setText(feedback);
-        btnClose.setOnClickListener(v -> dialog.dismiss());
+            btnSubmits[i].setOnClickListener(v -> {
 
-        dialog.show();
+                String answer = etAnswers[index].getText().toString();
+
+                // ✅ TODO: 백엔드 GPT 채점 → DB 저장 (현재 비워둠)
+
+                // ✅ 프론트엔드 제출 처리
+                submitPref.edit().putBoolean("submitted_" + index, true).apply();
+
+                disableQuestion(index);
+                showFeedbackDialog();
+            });
+        }
     }
 
-    // --------------------------------
-    // 로딩 다이얼로그
-    // --------------------------------
-    private Dialog showLoadingDialog() {
+    // --------------------------------------------------
+    // 문제 비활성화
+    // --------------------------------------------------
+    private void disableQuestion(int index) {
+        etAnswers[index].setEnabled(false);
 
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.loading_dialog);
-        dialog.setCancelable(false);
-        dialog.show();
+        btnSubmits[index].setEnabled(false);
+        btnSubmits[index].setBackgroundTintList(
+                ColorStateList.valueOf(Color.LTGRAY)
+        );
+    }
 
-        return dialog;
+    private void enableQuestion(int index) {
+        etAnswers[index].setEnabled(true);
+        btnSubmits[index].setEnabled(true);
+    }
+
+    // --------------------------------------------------
+    // GPT 피드백 다이얼로그 (프론트 전용)
+    // --------------------------------------------------
+    private void showFeedbackDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("피드백을 불러오는 중입니다...\n\n(백엔드 연동 예정)")
+                .setPositiveButton("확인", null)
+                .show();
+    }
+
+    // --------------------------------------------------
+    // 12시간 카운트다운
+    // --------------------------------------------------
+    private void startCountdownTimer() {
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                long lastTime = timePref.getLong("last_refresh_time", 0);
+                long target = lastTime + REFRESH_INTERVAL;
+
+                long now = System.currentTimeMillis();
+                long diff = target - now;
+
+                if (diff <= 0) {
+                    tvCountdown.setText("새 문제를 불러오는 중...");
+                    loadQuestionsFromDB();
+                    handler.postDelayed(this, 1000);
+                    return;
+                }
+
+                long h = diff / (1000 * 60 * 60);
+                long m = (diff / (1000 * 60)) % 60;
+                long s = (diff / 1000) % 60;
+
+                tvCountdown.setText(
+                        String.format("다음 문제까지 %02d:%02d:%02d", h, m, s)
+                );
+
+                handler.postDelayed(this, 1000);
+            }
+        });
     }
 }

@@ -2,9 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fcfcfc">
+    android:background="#FCFCFC">
 
-    <!-- 상단 플로팅 헤더 -->
     <TextView
         android:id="@+id/tvMainHeader"
         android:layout_width="match_parent"
@@ -18,8 +17,8 @@
         android:paddingStart="20dp"
         android:paddingTop="16dp"/>
 
-    <!-- 전체 스크롤 영역 -->
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tvMainHeader"
@@ -32,14 +31,39 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- question_layout 5개 -->
-            <include layout="@layout/question_layout" android:id="@+id/mainQuestion1"/>
-            <include layout="@layout/question_layout" android:id="@+id/mainQuestion2"/>
-            <include layout="@layout/question_layout" android:id="@+id/mainQuestion3"/>
-            <include layout="@layout/question_layout" android:id="@+id/mainQuestion4"/>
-            <include layout="@layout/question_layout" android:id="@+id/mainQuestion5"/>
+            <include
+                android:id="@+id/q1"
+                layout="@layout/question_sub_layout" />
+
+            <include
+                android:id="@+id/q2"
+                layout="@layout/question_sub_layout" />
+
+            <include
+                android:id="@+id/q3"
+                layout="@layout/question_sub_layout" />
+
+            <include
+                android:id="@+id/q4"
+                layout="@layout/question_sub_layout" />
+
+            <include
+                android:id="@+id/q5"
+                layout="@layout/question_sub_layout" />
 
         </LinearLayout>
     </ScrollView>
+
+    <!-- 오른쪽 하단 12시간 카운트다운 -->
+    <TextView
+        android:id="@+id/tvCountdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="다음 문제까지 12:00:00"
+        android:textSize="14sp"
+        android:textColor="#242424"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp" />
 
 </RelativeLayout>

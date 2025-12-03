@@ -145,9 +145,7 @@ public class MainTestActivity extends AppCompatActivity {
         }
     }
 
-    // --------------------------------------------------
     // 문제 비활성화
-    // --------------------------------------------------
     private void disableQuestion(int index) {
         etAnswers[index].setEnabled(false);
 
@@ -162,9 +160,7 @@ public class MainTestActivity extends AppCompatActivity {
         btnSubmits[index].setEnabled(true);
     }
 
-    // --------------------------------------------------
     // GPT 피드백 다이얼로그 (프론트 전용)
-    // --------------------------------------------------
     private void showFeedbackDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -173,9 +169,7 @@ public class MainTestActivity extends AppCompatActivity {
                 .show();
     }
 
-    // --------------------------------------------------
     // 12시간 카운트다운
-    // --------------------------------------------------
     private void startCountdownTimer() {
 
         handler.post(new Runnable() {

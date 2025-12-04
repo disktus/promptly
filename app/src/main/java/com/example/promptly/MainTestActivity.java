@@ -154,9 +154,9 @@ public class MainTestActivity extends AppCompatActivity {
 
                 String answer = etAnswers[index].getText().toString();
 
-                // ✅ TODO: 백엔드 GPT 채점 → DB 저장 (현재 비워둠)
+                // TODO: 백엔드 GPT 채점 → DB 저장 (현재 비워둠)
 
-                // ✅ 프론트엔드 제출 처리
+                // 프론트엔드 제출 처리
                 submitPref.edit().putBoolean("submitted_" + index, true).apply();
 
                 disableQuestion(index);

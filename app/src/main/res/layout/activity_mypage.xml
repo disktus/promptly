@@ -136,7 +136,6 @@
             android:orientation="vertical"/>
     </ScrollView>
 
-    <!-- ✅ 하단 네비 (고정 높이) -->
     <include
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav"

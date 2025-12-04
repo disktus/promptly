@@ -35,7 +35,7 @@ public class MyPageActivity extends AppCompatActivity {
     ImageView btnHome;
     ImageView btnMy;
 
-    // ✅ SharedPreferences 키 (MainActivity와 동일)
+    // SharedPreferences 키 (MainActivity와 동일)
     private static final String PREFS_NAME = "MyPrefs";
     private static final String NICKNAME_KEY = "nickname";
 
@@ -47,14 +47,11 @@ public class MyPageActivity extends AppCompatActivity {
         bindViews();
         setupBottomNav();
 
-        loadNicknameFromPrefs();   // ✅ 로그인된 닉네임 불러오기
-        applyDummyStats();        // ✅ 점수, 퍼센트 더미
-        loadHistoryMock();        // ✅ 최근기록 더미
+        loadNicknameFromPrefs();   // 로그인된 닉네임 불러오기
+        applyDummyStats();        // 점수, 퍼센트 더미
+        loadHistoryMock();        // 최근기록 더미
     }
 
-    // --------------------------------------------------
-    // ✅ View 연결
-    // --------------------------------------------------
     private void bindViews() {
 
         tvNickname = findViewById(R.id.tvNickname);
@@ -73,9 +70,7 @@ public class MyPageActivity extends AppCompatActivity {
         btnMy = findViewById(R.id.btnMy);
     }
 
-    // --------------------------------------------------
-    // ✅ 닉네임은 SharedPreferences 기준 (로그인 연동)
-    // --------------------------------------------------
+    // 닉네임은 SharedPreferences 기준 (로그인 연동)
     private void loadNicknameFromPrefs() {
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -88,24 +83,20 @@ public class MyPageActivity extends AppCompatActivity {
         }
     }
 
-    // --------------------------------------------------
-    // ✅ 통계는 전부 더미 데이터
-    // --------------------------------------------------
+    // 통계는 전부 더미 데이터
     private void applyDummyStats() {
 
         tvAvgLabel.setText("평균\n점수는");
-        tvAvgScore.setText("87점");   // ✅ 더미 평균점수
+        tvAvgScore.setText("87점");   // 더미 평균점수
 
         tvSolveLabel.setText("풀이수 상위 ");
-        tvSolveRank.setText("15%");  // ✅ 더미 풀이수 퍼센트
+        tvSolveRank.setText("15%");  // 더미 풀이수 퍼센트
 
         tvScoreLabel.setText("평균점수 상위 ");
-        tvScoreRank.setText("9%");   // ✅ 더미 평균점수 퍼센트
+        tvScoreRank.setText("9%");   // 더미 평균점수 퍼센트
     }
 
-    // --------------------------------------------------
-    // ✅ 최근 기록 더미 (30개)
-    // --------------------------------------------------
+    // 최근 기록 더미 (30개)
     private void loadHistoryMock() {
 
         layoutHistory.removeAllViews();
@@ -132,9 +123,7 @@ public class MyPageActivity extends AppCompatActivity {
         }
     }
 
-    // --------------------------------------------------
-    // ✅ 문제 / 답변 / 피드백 다이얼로그 (더미)
-    // --------------------------------------------------
+    // 문제 / 답변 / 피드백 다이얼로그 (더미)
     private void showHistoryDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -145,8 +134,6 @@ public class MyPageActivity extends AppCompatActivity {
         TextView tvFeedback = view.findViewById(R.id.tvFeedback);
         Button btnClose = view.findViewById(R.id.btnClose);
 
-
-        // ✅ 더미 피드백 내용 적용
         tvFeedback.setText(
                 "문제:\n다음 조건을 만족하는 프롬프트를 입력하세요.\n\n" +
                         "답변:\n사용자가 작성한 프롬프트 예시입니다.\n\n" +
@@ -162,9 +149,7 @@ public class MyPageActivity extends AppCompatActivity {
     }
 
 
-    // --------------------------------------------------
-    // ✅ 하단 네비게이션
-    // --------------------------------------------------
+    // 하단 네비게이션
     private void setupBottomNav() {
 
         btnHome.setOnClickListener(v -> {

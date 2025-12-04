@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="#FCFCFC">
 
-    <!-- ✅ 상단 헤더 -->
+    <!-- 상단 헤더 -->
     <TextView
         android:id="@+id/tvMainHeader"
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
         android:paddingStart="20dp"
         android:paddingTop="16dp" />
 
-    <!-- ✅ 스크롤 영역 -->
+    <!-- 스크롤 영역 -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"

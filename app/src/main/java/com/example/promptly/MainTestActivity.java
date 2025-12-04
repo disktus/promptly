@@ -20,6 +20,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Intent;
+import android.widget.ImageView;
+
+
 public class MainTestActivity extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -39,6 +43,9 @@ public class MainTestActivity extends AppCompatActivity {
     SharedPreferences timePref;
     SharedPreferences submitPref;
 
+    ImageView btnHome, btnMy;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +61,21 @@ public class MainTestActivity extends AppCompatActivity {
 
         loadQuestionsFromDB();
         startCountdownTimer();
+
+        btnHome = findViewById(R.id.btnHome);
+        btnMy = findViewById(R.id.btnMy);
+
+        // 홈 버튼 (현재 페이지)
+        btnHome.setOnClickListener(v -> {
+            // 아무 동작 안 함 (이미 홈)
+        });
+
+        // 마이페이지 이동
+        btnMy.setOnClickListener(v -> {
+            Intent intent = new Intent(MainTestActivity.this, MyPageActivity.class);
+            startActivity(intent);
+        });
+
     }
 
     // 문제 5개 뷰 연결
@@ -73,14 +95,6 @@ public class MainTestActivity extends AppCompatActivity {
     // Firestore에서 5문제 랜덤 로딩 + 12시간 체크
     private void loadQuestionsFromDB() {
 
-        long lastTime = timePref.getLong("last_refresh_time", 0);
-        long now = System.currentTimeMillis();
-
-        // 12시간 안 지났으면 새로 뽑지 않음
-        if (now - lastTime < REFRESH_INTERVAL) {
-            return;
-        }
-
         db.collection("questions")
                 .get()
                 .addOnSuccessListener(result -> {
@@ -91,7 +105,10 @@ public class MainTestActivity extends AppCompatActivity {
                         list.add(doc.getData());
                     }
 
-                    if (list.size() < 5) return;
+                    if (list.size() < 5) {
+                        tvCountdown.setText("문제가 5개 미만입니다");
+                        return;
+                    }
 
                     Collections.shuffle(list);
 
@@ -109,15 +126,18 @@ public class MainTestActivity extends AppCompatActivity {
                                         "스타일: " + q.get("style");
 
                         tvConditions[i].setText(cond);
-
                         enableQuestion(i);
                     }
 
-                    // 시간 / 제출 상태 초기화
-                    timePref.edit().putLong("last_refresh_time", now).apply();
+                    timePref.edit().putLong("last_refresh_time", System.currentTimeMillis()).apply();
                     submitPref.edit().clear().apply();
+                })
+                .addOnFailureListener(e -> {
+                    tvCountdown.setText("문제 로딩 실패");
+                    e.printStackTrace();
                 });
     }
+
 
     // --------------------------------------------------
     // 제출 버튼 로직
@@ -134,9 +154,9 @@ public class MainTestActivity extends AppCompatActivity {
 
                 String answer = etAnswers[index].getText().toString();
 
-                // ✅ TODO: 백엔드 GPT 채점 → DB 저장 (현재 비워둠)
+                // TODO: 백엔드 GPT 채점 → DB 저장 (현재 비워둠)
 
-                // ✅ 프론트엔드 제출 처리
+                // 프론트엔드 제출 처리
                 submitPref.edit().putBoolean("submitted_" + index, true).apply();
 
                 disableQuestion(index);
@@ -164,10 +184,27 @@ public class MainTestActivity extends AppCompatActivity {
     private void showFeedbackDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("피드백을 불러오는 중입니다...\n\n(백엔드 연동 예정)")
-                .setPositiveButton("확인", null)
-                .show();
+        View view = getLayoutInflater().inflate(R.layout.feedback_dialog, null);
+        builder.setView(view);
+
+        TextView tvFeedback = view.findViewById(R.id.tvFeedback);
+        Button btnClose = view.findViewById(R.id.btnClose);
+
+        // MainTest 전용 피드백 내용
+        tvFeedback.setText(
+                "피드백을 불러오는 중입니다...\n\n" +
+                        "(백엔드 GPT 채점 연동 예정입니다)"
+        );
+
+        AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
+
 
     // 12시간 카운트다운
     private void startCountdownTimer() {
@@ -201,4 +238,5 @@ public class MainTestActivity extends AppCompatActivity {
             }
         });
     }
+
 }

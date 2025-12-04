@@ -1,0 +1,164 @@
+package com.example.promptly;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+
+public class MyPageActivity extends AppCompatActivity {
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    // ===== 상단 정보 =====
+    TextView tvNickname;
+    TextView tvAvgLabel;
+    TextView tvAvgScore;
+    TextView tvSolveLabel;
+    TextView tvSolveRank;
+    TextView tvScoreLabel;
+    TextView tvScoreRank;
+
+    // ===== 최근 기록 =====
+    LinearLayout layoutHistory;
+
+    // ===== 하단 네비 =====
+    ImageView btnHome;
+    ImageView btnMy;
+
+    // SharedPreferences 키 (MainActivity와 동일)
+    private static final String PREFS_NAME = "MyPrefs";
+    private static final String NICKNAME_KEY = "nickname";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_mypage);
+
+        bindViews();
+        setupBottomNav();
+
+        loadNicknameFromPrefs();   // 로그인된 닉네임 불러오기
+        applyDummyStats();        // 점수, 퍼센트 더미
+        loadHistoryMock();        // 최근기록 더미
+    }
+
+    private void bindViews() {
+
+        tvNickname = findViewById(R.id.tvNickname);
+        tvAvgLabel = findViewById(R.id.tvAvgLabel);
+        tvAvgScore = findViewById(R.id.tvAvgScore);
+
+        tvSolveLabel = findViewById(R.id.tvSolveLabel);
+        tvSolveRank = findViewById(R.id.tvSolveRank);
+
+        tvScoreLabel = findViewById(R.id.tvScoreLabel);
+        tvScoreRank = findViewById(R.id.tvScoreRank);
+
+        layoutHistory = findViewById(R.id.layoutHistory);
+
+        btnHome = findViewById(R.id.btnHome);
+        btnMy = findViewById(R.id.btnMy);
+    }
+
+    // 닉네임은 SharedPreferences 기준 (로그인 연동)
+    private void loadNicknameFromPrefs() {
+
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String nickname = prefs.getString(NICKNAME_KEY, null);
+
+        if (nickname != null) {
+            tvNickname.setText(nickname + "님의");
+        } else {
+            tvNickname.setText("사용자님의");
+        }
+    }
+
+    // 통계는 전부 더미 데이터
+    private void applyDummyStats() {
+
+        tvAvgLabel.setText("평균\n점수는");
+        tvAvgScore.setText("87점");   // 더미 평균점수
+
+        tvSolveLabel.setText("풀이수 상위 ");
+        tvSolveRank.setText("15%");  // 더미 풀이수 퍼센트
+
+        tvScoreLabel.setText("평균점수 상위 ");
+        tvScoreRank.setText("9%");   // 더미 평균점수 퍼센트
+    }
+
+    // 최근 기록 더미 (30개)
+    private void loadHistoryMock() {
+
+        layoutHistory.removeAllViews();
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        for (int i = 1; i <= 30; i++) {
+            View item = inflater.inflate(R.layout.item_history, layoutHistory, false);
+
+            TextView date = item.findViewById(R.id.tvHistoryDate);
+            TextView situation = item.findViewById(R.id.tvHistorySituation);
+            TextView role = item.findViewById(R.id.tvHistoryRole);
+            TextView doc = item.findViewById(R.id.tvHistoryDoc);
+            TextView style = item.findViewById(R.id.tvHistoryStyle);
+
+            date.setText("2025-12-" + String.format("%02d", i));
+            situation.setText("상황: 학교 과제");
+            role.setText(" / 직업: 대학생");
+            doc.setText(" / 작성물: 보고서");
+            style.setText(" / 스타일: 객관적");
+
+            item.setOnClickListener(v -> showHistoryDialog());
+
+            layoutHistory.addView(item);
+        }
+    }
+
+    // 문제 / 답변 / 피드백 다이얼로그 (더미)
+    private void showHistoryDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        View view = getLayoutInflater().inflate(R.layout.feedback_dialog, null);
+        builder.setView(view);
+
+        TextView tvFeedback = view.findViewById(R.id.tvFeedback);
+        Button btnClose = view.findViewById(R.id.btnClose);
+
+        tvFeedback.setText(
+                "문제:\n다음 조건을 만족하는 프롬프트를 입력하세요.\n\n" +
+                        "답변:\n사용자가 작성한 프롬프트 예시입니다.\n\n" +
+                        "피드백:\nGPT 피드백 예시입니다."
+        );
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+
+    // 하단 네비게이션
+    private void setupBottomNav() {
+
+        btnHome.setOnClickListener(v -> {
+            startActivity(new Intent(this, MainTestActivity.class));
+            finish();
+        });
+
+        btnMy.setOnClickListener(v -> {
+            // 현재 페이지 유지
+        });
+    }
+}

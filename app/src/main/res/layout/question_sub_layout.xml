@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/tvQuestionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="다음 조건을 만족하는 프롬프트를 입력하세요."
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="#242424"/>
+
+    <TextView
+        android:id="@+id/tvConditions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="상황:\n직업:\n작성물:\n스타일:"
+        android:layout_marginTop="6dp"
+        android:textSize="16sp"
+        android:textColor="#242424"/>
+
+    <EditText
+        android:id="@+id/etAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/rounded_edittext"
+        android:gravity="top|start"
+        android:padding="14dp"
+        android:maxLength="300"
+        android:hint="프롬프트를 입력하세요."
+        android:inputType="textMultiLine"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/btnSubmitOne"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#242424"
+        android:text="제출"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"/>
+</LinearLayout>

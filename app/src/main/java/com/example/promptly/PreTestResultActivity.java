@@ -9,18 +9,26 @@ import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class PreTestResultActivity extends AppCompatActivity {
 
-    private static final String PREFS_NAME = "MyPrefs";
-    private static final String NICKNAME_KEY = "nickname";
-    private static final String PRETEST_DONE_KEY = "pretest_completed";
+    // SharedPreferences 상수 정의 (MainActivity와 통일)
+    private static final String PREFS_NAME = MainActivity.PREFS_NAME;
+    private static final String NICKNAME_KEY = MainActivity.NICKNAME_KEY;
+    private static final String PRETEST_COMPLETED_KEY = MainActivity.PRETEST_COMPLETED_KEY;
 
+    // Intent Extra 키 정의
+    private static final String EXTRA_TOTAL_SCORE = "TOTAL_SCORE";
+    private static final String EXTRA_SCORES = "ITEM_SCORES";
+
+    // 뷰 변수 선언
     private TextView tvResultIntro, tvFinalScore, tvMessage;
     private ProgressBar[] progressBars;
 
+    // 점수 막대 색상 정의
     private final int[] barColors = {
             Color.parseColor("#add7a0"), // 명확성
             Color.parseColor("#8ecf8c"), // 구체성
@@ -31,14 +39,17 @@ public class PreTestResultActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 액티비티 생성 및 초기 설정
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pretest_result);
 
+        // 뷰 참조 설정
         tvResultIntro = findViewById(R.id.tv_result_intro);
         tvFinalScore = findViewById(R.id.tv_final_score);
         tvMessage = findViewById(R.id.tv_message);
         ImageButton btnNext = findViewById(R.id.btn_next);
 
+        // ProgressBar 배열 초기화
         progressBars = new ProgressBar[]{
                 findViewById(R.id.progress_clarity),
                 findViewById(R.id.progress_specificity),
@@ -47,6 +58,7 @@ public class PreTestResultActivity extends AppCompatActivity {
                 findViewById(R.id.progress_context)
         };
 
+        // ProgressBar 색상 초기 설정
         for (int i = 0; i < progressBars.length; i++) {
             progressBars[i].setProgressTintList(
                     ColorStateList.valueOf(barColors[i])
@@ -61,29 +73,38 @@ public class PreTestResultActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String nickname = prefs.getString(NICKNAME_KEY, "사용자");
 
-        tvResultIntro.setText(nickname + "님의 점수는");
+        // 인텐트에서 점수 데이터 가져오기
+        Intent intent = getIntent();
+        int totalScore_1500 = intent.getIntExtra(EXTRA_TOTAL_SCORE, 0);
+        int[] itemScores_100 = intent.getIntArrayExtra(EXTRA_SCORES);
+        int finalDisplayScore = totalScore_1500 / 15;
 
-        // 더미 점수
-        int totalScore = 90;
-        int[] dummyScores = {17, 16, 15, 18, 18};
+        // 점수 데이터 유효성 검사 및 기본값 설정
+        if (itemScores_100 == null || itemScores_100.length != 5) {
+            Toast.makeText(this, "점수 데이터 로드에 실패했습니다. 기본값으로 표시합니다.", Toast.LENGTH_LONG).show();
+            itemScores_100 = new int[]{50, 50, 50, 50, 50};
+            finalDisplayScore = 50;
+        }
 
-        showAnimatedScore(totalScore);
-        showBarChart(dummyScores);
-        showMessage(totalScore);
-/*
-        // 다음 버튼 → 프리테스트 완료 처리 후 메인 이동
+        // 화면 요소에 결과 데이터 반영 및 애니메이션 시작
+        tvResultIntro.setText(nickname + "님의 최종 점수");
+        showAnimatedScore(finalDisplayScore);
+        showBarChart(itemScores_100);
+        showMessage(finalDisplayScore);
+
+        // 다음 버튼 클릭 이벤트 설정 (프리테스트 완료 처리 후 메인 이동)
         btnNext.setOnClickListener(v -> {
-            prefs.edit().putBoolean(PRETEST_DONE_KEY, true).apply();
-            Intent intent = new Intent(this, MainTestActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            prefs.edit().putBoolean(PRETEST_COMPLETED_KEY, true).apply();
+            Intent mainIntent = new Intent(this, MainTestActivity.class);
+            mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainIntent);
             finish();
         });
- */
     }
 
-    // 총점 애니메이션
+    // 총점 애니메이션을 표시
     private void showAnimatedScore(int finalScore) {
+        // 총점 애니메이션 설정 및 시작
         tvFinalScore.setText("0점");
         tvFinalScore.setTextColor(getScoreColor(finalScore));
 
@@ -94,7 +115,7 @@ public class PreTestResultActivity extends AppCompatActivity {
         animator.start();
     }
 
-    // 점수별 색상
+    // 점수에 따른 텍스트 색상을 결정
     private int getScoreColor(int score) {
         if (score >= 90) return Color.parseColor("#66c255");
         else if (score >= 75) return Color.parseColor("#52b2de");
@@ -102,11 +123,14 @@ public class PreTestResultActivity extends AppCompatActivity {
         else return Color.parseColor("#ed574c");
     }
 
-    // 막대그래프 애니메이션
-    private void showBarChart(int[] scores) {
+    // 항목별 막대그래프 애니메이션을 표시 (100점 만점 -> 20점 만점 비율로 변환)
+    private void showBarChart(int[] scores_100) {
+        // 항목별 점수를 막대그래프에 애니메이션으로 반영
         for (int i = 0; i < progressBars.length; i++) {
             int index = i;
-            ValueAnimator animator = ValueAnimator.ofInt(0, scores[i]);
+            int score_20 = scores_100[i] / 5;
+
+            ValueAnimator animator = ValueAnimator.ofInt(0, score_20);
             animator.setDuration(1200);
             animator.addUpdateListener(animation ->
                     progressBars[index].setProgress((int) animation.getAnimatedValue()));
@@ -114,8 +138,9 @@ public class PreTestResultActivity extends AppCompatActivity {
         }
     }
 
-    // 격려 메시지
+    // 총점에 따른 격려 메시지를 표시
     private void showMessage(int score) {
+        // 점수 구간별 메시지 설정 (100점 만점 기준)
         if (score >= 90) tvMessage.setText("완벽해요! 훌륭한 프롬프터군요!");
         else if (score >= 75) tvMessage.setText("아주 좋아요! 조금만 더 다듬어봐요!");
         else if (score >= 60) tvMessage.setText("기초는 충분해요! 더 잘할 수 있어요.");

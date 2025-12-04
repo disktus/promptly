@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FieldValue; // FieldValue 임포트 추가
+import com.google.firebase.firestore.FieldValue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,7 +77,6 @@ public class PreTestActivity extends AppCompatActivity {
 
     // question_layout 내부 뷰 연결
     private void setupQuestionViews() {
-        // 뷰 ID 배열
         int[] questionIds = { R.id.question1, R.id.question2, R.id.question3 };
 
         for (int i = 0; i < 3; i++) {
@@ -150,54 +149,51 @@ public class PreTestActivity extends AppCompatActivity {
 
     // 채점 결과를 계산하고 Firestore에 저장한 후 결과 화면으로 이동
     private void calculateAndSaveResults() {
-        // 임시 채점 로직 (실제 API 호출 대신 사용)
+        // 임시 채점 로직
         Random random = new Random();
 
-        // 🔥 totalScore를 배열로 선언하여 콜백 내부에서 참조 가능하게 함 (effectively final 해결)
-        final int[] totalScore = new int[]{0};
-        final int[] itemScores = new int[5]; // 항목별 점수 저장용 배열
+        // totalScore를 배열로 선언하여 콜백 내부에서 참조 가능
+        final int[] totalScore_500 = new int[]{0};
+        // 항목별 점수 저장용 배열 (0~100점 기준)
+        final int[] itemScores_100 = new int[5];
 
         for (int i = 0; i < 3; i++) {
             String questionId = loadedQuestionIds.get(i);
             String answer = etAnswers[i].getText().toString();
 
-            // 임의의 점수 (10~20점) 5개 항목 설정
-            int clarity = 10 + random.nextInt(11);
-            int specificity = 10 + random.nextInt(11);
-            int logic = 10 + random.nextInt(11);
-            int creativity = 10 + random.nextInt(11);
-            int context = 10 + random.nextInt(11);
+            // 항목당 0~100점 범위로 랜덤 점수 생성
+            int clarity = random.nextInt(101);
+            int specificity = random.nextInt(101);
+            int logic = random.nextInt(101);
+            int creativity = random.nextInt(101);
+            int context = random.nextInt(101);
 
             int score = clarity + specificity + logic + creativity + context;
 
-            // 🔥 totalScore 배열에 누적
-            totalScore[0] += score;
+            totalScore_500[0] += score;
 
-            // 항목별 점수 누적 (총 3문제의 평균을 보여주지 않고 총점을 보여줄 것이므로, 여기서는 항목별 총합을 계산하지 않음)
-            // PreTestResultActivity는 문제 1개의 평가를 기준으로 그래프를 보여주므로, 여기서는 마지막 문제의 점수를 사용하거나
-            // 모든 문제의 평균 점수를 계산해야 함. 여기서는 계산 편의상 마지막 문제의 점수를 저장
+            // PreTestResultActivity로 전달할 항목별 점수를 마지막 문제 기준으로 0~100점 범위로 저장
             if (i == 2) {
-                itemScores[0] = clarity;
-                itemScores[1] = specificity;
-                itemScores[2] = logic;
-                itemScores[3] = creativity;
-                itemScores[4] = context;
+                itemScores_100[0] = clarity;
+                itemScores_100[1] = specificity;
+                itemScores_100[2] = logic;
+                itemScores_100[3] = creativity;
+                itemScores_100[4] = context;
             }
-
 
             // 평가 기록 저장
             saveEvaluation(questionId, answer, clarity, specificity, logic, creativity, context, score);
         }
 
         // 유저 총점 갱신 및 순위 재계산
-        userRepository.incrementAttemptAndScore(currentUserId, totalScore[0], new UserRepository.RankUpdateCallback() {
+        userRepository.incrementAttemptAndScore(currentUserId, totalScore_500[0], new UserRepository.RankUpdateCallback() {
             @Override
             public void onRanksUpdated() {
                 // 모든 작업 완료 후 결과 화면으로 이동
                 loadingDialog.dismiss();
                 markTestCompleted();
-                // 🔥 배열에서 값 참조
-                navigateToResultScreen(totalScore[0], itemScores);
+                // 최종 총점 (1500점 만점)과 항목별 점수 (100점 만점) 전달
+                navigateToResultScreen(totalScore_500[0], itemScores_100);
             }
         });
     }
@@ -233,8 +229,8 @@ public class PreTestActivity extends AppCompatActivity {
     private void navigateToResultScreen(int totalScore, int[] itemScores) {
         // 총점과 항목별 점수를 담아 결과 화면으로 이동
         Intent intent = new Intent(PreTestActivity.this, PreTestResultActivity.class);
-        intent.putExtra("TOTAL_SCORE", totalScore);
-        intent.putExtra("ITEM_SCORES", itemScores); // 항목별 점수 배열도 함께 전달
+        intent.putExtra("TOTAL_SCORE", totalScore); // 1500점 만점 (3문제 총합)
+        intent.putExtra("ITEM_SCORES", itemScores); // 100점 만점 항목별 점수
         startActivity(intent);
         finish();
     }

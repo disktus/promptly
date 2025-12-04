@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FCFCFC">
+
+    <!-- ✅ 상단 헤더 -->
+    <TextView
+        android:id="@+id/tvMainHeader"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:text="오늘도 AI 프롬프트 실력 업! 🌱"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#F4F1EA"
+        android:background="@drawable/rounded_bottom_header"
+        android:elevation="6dp"
+        android:paddingStart="20dp"
+        android:paddingTop="16dp" />
+
+    <!-- ✅ 스크롤 영역 -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tvMainHeader"
+        android:layout_above="@id/bottomNav"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/layoutContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <include
+                android:id="@+id/q1"
+                layout="@layout/question_sub_layout" />
+
+            <include
+                android:id="@+id/q2"
+                layout="@layout/question_sub_layout" />
+
+            <include
+                android:id="@+id/q3"
+                layout="@layout/question_sub_layout" />
+
+            <include
+                android:id="@+id/q4"
+                layout="@layout/question_sub_layout" />
+
+            <include
+                android:id="@+id/q5"
+                layout="@layout/question_sub_layout" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 하단 네비게이션 -->
+    <include
+        android:id="@+id/bottomNav"
+        layout="@layout/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+    <TextView
+        android:id="@+id/tvCountdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="다음 문제까지 12:00:00"
+        android:textSize="14sp"
+        android:textColor="#242424"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/bottomNav"
+        android:layout_margin="16dp" />
+
+</RelativeLayout>

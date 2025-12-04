@@ -12,6 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Promptly">
         <activity
+            android:name=".PreTestActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".PreTestResultActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".MainTestActivity"
+            android:exported="true"/>
+        <activity
+            android:name=".MyPageActivity"
+            android:exported="true"/>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

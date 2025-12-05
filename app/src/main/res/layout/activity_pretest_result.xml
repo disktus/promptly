@@ -4,33 +4,33 @@
     android:padding="24dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#bed477">
+    android:background="#bdcf72">
 
     <!-- 결과 텍스트 -->
     <TextView
         android:id="@+id/tv_result_intro"
         android:textSize="24sp"
-        android:textColor="#242424"
+        android:textColor="#363430"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="0.5"
         android:paddingTop="12dp"
         android:gravity="center_vertical"
         android:fontFamily="@font/seoul_alrim_extrabold"
-        android:text="🌱테스트 결과🌱" />
+        android:text="테스트 결과" />
 
     <!-- 구분선 -->
     <View
         android:layout_width="200dp"
         android:layout_height="2dp"
         android:layout_marginBottom="32dp"
-        android:background="#242424" />
+        android:background="#363430" />
 
     <!-- 총점 -->
     <TextView
         android:id="@+id/tv_final_score"
         android:textSize="72sp"
-        android:textColor="#121212"
+        android:textColor="#363430"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="0.5"
@@ -66,7 +66,7 @@
                 <TextView
                     android:text="명확성"
                     android:fontFamily="@font/seoul_alrim_bold"
-                    android:textColor="#292929"
+                    android:textColor="#363430"
                     android:textSize="32sp"
                     android:layout_width="0dp"
                     android:layout_weight="0.4"
@@ -91,7 +91,7 @@
                 <TextView
                     android:text="구체성"
                     android:fontFamily="@font/seoul_alrim_bold"
-                    android:textColor="#292929"
+                    android:textColor="#363430"
                     android:textSize="32sp"
                     android:layout_width="0dp"
                     android:layout_weight="0.4"
@@ -116,7 +116,7 @@
                 <TextView
                     android:text="형식"
                     android:fontFamily="@font/seoul_alrim_bold"
-                    android:textColor="#292929"
+                    android:textColor="#363430"
                     android:textSize="32sp"
                     android:layout_width="0dp"
                     android:layout_weight="0.4"
@@ -141,7 +141,7 @@
                 <TextView
                     android:text="역할"
                     android:fontFamily="@font/seoul_alrim_bold"
-                    android:textColor="#292929"
+                    android:textColor="#363430"
                     android:textSize="32sp"
                     android:layout_width="0dp"
                     android:layout_weight="0.4"
@@ -166,7 +166,7 @@
                 <TextView
                     android:text="맥락"
                     android:fontFamily="@font/seoul_alrim_bold"
-                    android:textColor="#292929"
+                    android:textColor="#363430"
                     android:textSize="32sp"
                     android:layout_width="0dp"
                     android:layout_weight="0.4"
@@ -200,6 +200,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/seoul_alrim_bold"
             android:text="아주 좋아요! 조금만 더 다듬어봐요!"
+            android:textColor="#363430"
             android:textSize="18sp"
             android:gravity="center"/>
 

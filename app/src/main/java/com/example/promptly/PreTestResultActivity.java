@@ -96,10 +96,10 @@ public class PreTestResultActivity extends AppCompatActivity {
 
     // 점수별 색상
     private int getScoreColor(int score) {
-        if (score >= 90) return Color.parseColor("#66c255");
-        else if (score >= 75) return Color.parseColor("#52b2de");
-        else if (score >= 60) return Color.parseColor("#f2c43a");
-        else return Color.parseColor("#ed574c");
+        if (score >= 90) return Color.parseColor("#40b334");
+        else if (score >= 75) return Color.parseColor("#479dc4");
+        else if (score >= 60) return Color.parseColor("#c7992e");
+        else return Color.parseColor("#bd4037");
     }
 
     // 막대그래프 애니메이션

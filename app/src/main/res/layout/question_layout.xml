@@ -10,18 +10,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="다음 조건을 만족하는 프롬프트를\n입력하세요."
-        android:textStyle="bold"
+        android:fontFamily="@font/seoul_alrim_bold"
         android:textSize="22sp"
-        android:textColor="#242424"/>
+        android:textColor="#363430"/>
 
     <TextView
         android:id="@+id/tvConditions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="상황:\n직업:\n작성물:\n스타일:"
+        android:fontFamily="@font/seoul_alrim_medium"
         android:layout_marginTop="6dp"
         android:textSize="18sp"
-        android:textColor="#242424"/>
+        android:textColor="#363430"/>
 
     <EditText
         android:id="@+id/etAnswer"
@@ -32,6 +33,7 @@
         android:padding="14dp"
         android:maxLength="300"
         android:hint="프롬프트를 입력하세요."
+        android:fontFamily="@font/seoul_alrim_medium"
         android:inputType="textMultiLine"
         android:layout_marginTop="8dp"/>
 </LinearLayout>

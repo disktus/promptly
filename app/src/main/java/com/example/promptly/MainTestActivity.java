@@ -65,18 +65,32 @@ public class MainTestActivity extends AppCompatActivity {
         btnHome = findViewById(R.id.btnHome);
         btnMy = findViewById(R.id.btnMy);
 
+        // 메인 페이지이므로 홈 활성 상태
+        btnHome.setImageResource(R.drawable.blossom);
+        btnMy.setImageResource(R.drawable.farmer);
+
         // 홈 버튼 (현재 페이지)
         btnHome.setOnClickListener(v -> {
-            // 아무 동작 안 함 (이미 홈)
+            // 이미 홈, 아무 것도 안 함
         });
 
         // 마이페이지 이동
         btnMy.setOnClickListener(v -> {
             Intent intent = new Intent(MainTestActivity.this, MyPageActivity.class);
             startActivity(intent);
+            finish();
         });
 
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        btnHome.setImageResource(R.drawable.blossom);
+        btnMy.setImageResource(R.drawable.farmer);
+    }
+
 
     // 문제 5개 뷰 연결
     private void setupViews() {

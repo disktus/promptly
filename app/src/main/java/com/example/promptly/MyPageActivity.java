@@ -152,13 +152,26 @@ public class MyPageActivity extends AppCompatActivity {
     // 하단 네비게이션
     private void setupBottomNav() {
 
+        // 마이페이지 = My 활성 상태
+        btnHome.setImageResource(R.drawable.seedling); // 홈 비활성
+        btnMy.setImageResource(R.drawable.chef);       // 마이 활성
+
         btnHome.setOnClickListener(v -> {
             startActivity(new Intent(this, MainTestActivity.class));
-            finish();
+            finish(); // 뒤로가기 시 아이콘 꼬임 방지
         });
 
         btnMy.setOnClickListener(v -> {
-            // 현재 페이지 유지
+            // 아무 것도 안 함
         });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // 마이페이지 복귀 시에도 상태 유지
+        btnHome.setImageResource(R.drawable.seedling);
+        btnMy.setImageResource(R.drawable.chef);
+    }
+
 }

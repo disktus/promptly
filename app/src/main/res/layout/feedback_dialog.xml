@@ -11,14 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="피드백 내용"
+        android:fontFamily="@font/seoul_alrim_medium"
         android:textSize="16sp"
-        android:textColor="#242424"/>
+        android:textAlignment="center"
+        android:textColor="#363430"/>
 
     <Button
         android:id="@+id/btnClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#242424"
+        android:backgroundTint="#99ba54"
         android:text="확인"
         android:layout_marginTop="16dp"
         android:layout_gravity="center"/>

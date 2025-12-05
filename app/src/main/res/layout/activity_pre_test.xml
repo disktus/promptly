@@ -9,13 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:text="pre-test"
+        android:fontFamily="@font/seoul_alrim_extrabold"
         android:textSize="30sp"
-        android:textStyle="bold"
         android:textColor="#ecf0e1"
         android:background="@drawable/rounded_bottom_header"
         android:elevation="6dp"
         android:paddingStart="18dp"
-        android:paddingTop="10dp"/>
+        android:paddingTop="15dp"/>
 
     <ScrollView
         android:id="@+id/scrollView"

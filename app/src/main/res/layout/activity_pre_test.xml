@@ -2,20 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fcfcfc">
+    android:background="#dce8a7">
 
     <TextView
         android:id="@+id/tvPreTestHeader"
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:text="pre-test"
+        android:fontFamily="@font/seoul_alrim_extrabold"
         android:textSize="30sp"
-        android:textStyle="bold"
-        android:textColor="#F4F1EA"
+        android:textColor="#ecf0e1"
         android:background="@drawable/rounded_bottom_header"
         android:elevation="6dp"
         android:paddingStart="18dp"
-        android:paddingTop="10dp"/>
+        android:paddingTop="15dp"/>
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -48,8 +48,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:layout_gravity="center"
-                android:backgroundTint="#242424"
+                android:backgroundTint="#99ba54"
                 android:text="제출하기"
+                android:fontFamily="@font/seoul_alrim_medium"
                 android:paddingHorizontal="30dp"/>
         </LinearLayout>
 

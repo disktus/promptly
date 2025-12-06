@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="32dp"
+    android:background="#a7c961"
     tools:context=".WelcomeActivity">
 
     <TextView
@@ -15,6 +15,7 @@
         android:textSize="22sp"
         android:gravity="center"
         android:textStyle="bold"
+        android:textColor="@android:color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btnStartTest"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,6 +31,8 @@
         android:text="테스트 시작하기"
         android:paddingHorizontal="40dp"
         android:textSize="18sp"
+        android:backgroundTint="@android:color/white"
+        android:textColor="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/tvWelcomeMessage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

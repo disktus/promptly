@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -123,22 +124,56 @@ public class MyPageActivity extends AppCompatActivity {
         }
     }
 
-    // 문제 / 답변 / 피드백 다이얼로그 (더미)
+    // 문제 / 답변 / 피드백 다이얼로그 (더미) - 수정됨
     private void showHistoryDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+        // 변경된 레이아웃 inflate
         View view = getLayoutInflater().inflate(R.layout.feedback_dialog, null);
         builder.setView(view);
 
-        TextView tvFeedback = view.findViewById(R.id.tvFeedback);
+        // 1. 새로운 ID 찾기
+        LinearLayout layoutLoading = view.findViewById(R.id.layoutLoading);
+        ScrollView layoutResult = view.findViewById(R.id.layoutResult);
+        
+        TextView tvTotalScore = view.findViewById(R.id.tvTotalScore);
+        TextView tvFeedbackContent = view.findViewById(R.id.tvFeedbackContent); // tvFeedback -> tvFeedbackContent
+        TextView tvExample = view.findViewById(R.id.tvExample);
+        
+        // 상세 항목 뷰 (더미 데이터용)
+        TextView tvItem1 = view.findViewById(R.id.tvItem1);
+        TextView tvItem2 = view.findViewById(R.id.tvItem2);
+        TextView tvItem3 = view.findViewById(R.id.tvItem3);
+        TextView tvItem4 = view.findViewById(R.id.tvItem4);
+        TextView tvItem5 = view.findViewById(R.id.tvItem5);
+
         Button btnClose = view.findViewById(R.id.btnClose);
 
-        tvFeedback.setText(
-                "문제:\n다음 조건을 만족하는 프롬프트를 입력하세요.\n\n" +
-                        "답변:\n사용자가 작성한 프롬프트 예시입니다.\n\n" +
-                        "피드백:\nGPT 피드백 예시입니다."
-        );
+        // 2. 로딩 화면 숨기고 결과 화면 바로 보이기 (더미니까)
+        if (layoutLoading != null) layoutLoading.setVisibility(View.GONE);
+        if (layoutResult != null) layoutResult.setVisibility(View.VISIBLE);
+
+        // 3. 더미 데이터 세팅
+        if (tvTotalScore != null) tvTotalScore.setText("85");
+        
+        if (tvItem1 != null) tvItem1.setText("1. 목적 적합성 (18점): 목표를 잘 달성함");
+        if (tvItem2 != null) tvItem2.setText("2. 명확성 (16점): 표현이 명확함");
+        if (tvItem3 != null) tvItem3.setText("3. 맥락 (17점): 배경 설명이 충분함");
+        if (tvItem4 != null) tvItem4.setText("4. 구조 (15점): 단계별 구성이 좋음");
+        if (tvItem5 != null) tvItem5.setText("5. CoT (19점): 논리적 흐름이 있음");
+
+        if (tvFeedbackContent != null) {
+            tvFeedbackContent.setText(
+                    "문제: 다음 조건을 만족하는 프롬프트 작성\n\n" +
+                    "답변: (사용자의 예시 답변)\n\n" +
+                    "총평: 전반적으로 잘 작성된 프롬프트입니다. 제약 조건을 좀 더 구체적으로 명시하면 완벽할 것입니다."
+            );
+        }
+
+        if (tvExample != null) {
+            tvExample.setText("이곳에 모범 답안 예시가 표시됩니다.");
+        }
 
         AlertDialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);

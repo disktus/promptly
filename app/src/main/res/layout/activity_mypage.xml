@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FCFCFC">
+    android:background="#dce8a7">
 
     <!-- 상단 정보 영역 -->
     <RelativeLayout
@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:background="#d6d6d6">
+        android:background="#99ba54">
 
         <TextView
             android:id="@+id/tvNickname"
@@ -19,10 +19,10 @@
             android:layout_height="wrap_content"
             android:text="홍길동님의"
             android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="#242424"
+            android:textColor="#363430"
+            android:fontFamily="@font/seoul_alrim_heavy"
             android:layout_marginStart="40dp"
-            android:layout_marginTop="40dp"/>
+            android:layout_marginTop="70dp"/>
 
         <TextView
             android:id="@+id/tvAvgLabel"
@@ -30,8 +30,8 @@
             android:layout_height="wrap_content"
             android:text="평균\n점수는"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#242424"
+            android:textColor="#363430"
+            android:fontFamily="@font/seoul_alrim_bold"
             android:layout_below="@id/tvNickname"
             android:layout_alignStart="@id/tvNickname"
             android:layout_marginTop="32dp"/>
@@ -42,8 +42,8 @@
             android:layout_height="wrap_content"
             android:text="87점"
             android:textSize="40sp"
-            android:textStyle="bold"
-            android:textColor="#242424"
+            android:fontFamily="@font/seoul_alrim_extrabold"
+            android:textColor="#F4F1EA"
             android:layout_toEndOf="@id/tvAvgLabel"
             android:layout_alignBottom="@id/tvAvgLabel"
             android:layout_marginStart="12dp"/>
@@ -68,8 +68,9 @@
                     android:layout_height="wrap_content"
                     android:text="풀이수 상위 "
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#777777"/>
+                    android:fontFamily="@font/seoul_alrim_bold"
+                    android:layout_marginRight="3dp"
+                    android:textColor="#363430"/>
 
                 <TextView
                     android:id="@+id/tvSolveRank"
@@ -77,8 +78,8 @@
                     android:layout_height="wrap_content"
                     android:text="15%"
                     android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:textColor="#242424"/>
+                    android:fontFamily="@font/seoul_alrim_extrabold"
+                    android:textColor="#F4F1EA"/>
             </LinearLayout>
 
             <LinearLayout
@@ -91,10 +92,11 @@
                     android:id="@+id/tvScoreLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="평균점수 상위 "
+                    android:text="평균점수 상위"
+                    android:layout_marginRight="3dp"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#777777"/>
+                    android:fontFamily="@font/seoul_alrim_bold"
+                    android:textColor="#363430"/>
 
                 <TextView
                     android:id="@+id/tvScoreRank"
@@ -102,8 +104,8 @@
                     android:layout_height="wrap_content"
                     android:text="9%"
                     android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:textColor="#242424"/>
+                    android:fontFamily="@font/seoul_alrim_extrabold"
+                    android:textColor="#F4F1EA"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -115,8 +117,8 @@
         android:layout_height="wrap_content"
         android:text="최근 문제 풀이 기록"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#242424"
+        android:fontFamily="@font/seoul_alrim_bold"
+        android:textColor="#363430"
         android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="8dp"/>
@@ -126,7 +128,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="7"
-        android:background="#FFFFFF">
+        android:background="#dce8a7">
 
         <LinearLayout
             android:id="@+id/layoutHistory"
@@ -140,5 +142,5 @@
         android:id="@+id/bottomNav"
         layout="@layout/bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="70dp"/>
+        android:layout_height="60dp"/>
 </LinearLayout>

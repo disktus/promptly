@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="64dp"
     android:orientation="horizontal"
-    android:background="#ffffff"
+    android:background="#d9cf66"
     android:elevation="10dp"
     android:gravity="center">
 
@@ -12,7 +12,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:src="@android:drawable/ic_menu_view"
+        android:scaleType="centerInside"
+        android:src="@drawable/seedling"
         android:padding="12dp"/>
 
     <ImageView
@@ -20,6 +21,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:src="@android:drawable/ic_menu_myplaces"
+        android:src="@drawable/farmer"
         android:padding="12dp"/>
 </LinearLayout>

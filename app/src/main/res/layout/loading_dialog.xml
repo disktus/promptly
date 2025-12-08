@@ -15,6 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="채점 중이에요..."
+        android:fontFamily="@font/seoul_alrim_medium"
         android:layout_marginTop="12dp"
         android:textSize="15sp"/>
 </LinearLayout>

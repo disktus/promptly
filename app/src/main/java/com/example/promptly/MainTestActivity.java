@@ -52,7 +52,6 @@ public class MainTestActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     GeminiApiService geminiApiService;
 
-    // UI Components
     TextView[] tvTitles = new TextView[5];
     TextView[] tvConditions = new TextView[5];
     EditText[] etAnswers = new EditText[5];
@@ -60,22 +59,21 @@ public class MainTestActivity extends AppCompatActivity {
     TextView tvCountdown;
     ImageView btnHome, btnMy;
 
-    // Data & State
     private List<Question> loadedQuestions = new ArrayList<>();
     private static final long REFRESH_INTERVAL = 12 * 60 * 60 * 1000;
     Handler handler = new Handler();
 
-    // SharedPreferences
     SharedPreferences timePref;
     SharedPreferences submitPref;
     SharedPreferences userPref;
+
+    private AlertDialog currentLoadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maintest);
 
-        // SharedPreferences 초기화
         timePref = getSharedPreferences("main_test_time", MODE_PRIVATE);
         submitPref = getSharedPreferences("main_test_submit", MODE_PRIVATE);
         userPref = getSharedPreferences("MyPrefs", MODE_PRIVATE);
@@ -125,16 +123,6 @@ public class MainTestActivity extends AppCompatActivity {
             tvConditions[i] = v.findViewById(R.id.tvConditions);
             etAnswers[i] = v.findViewById(R.id.etAnswer);
             btnSubmits[i] = v.findViewById(R.id.btnSubmitOne);
-        }
-    }
-
-    private static class Question {
-        String id;
-        Map<String, Object> data;
-
-        Question(String id, Map<String, Object> data) {
-            this.id = id;
-            this.data = data;
         }
     }
 
@@ -199,10 +187,9 @@ public class MainTestActivity extends AppCompatActivity {
     }
 
     private void callGeminiApi(String questionId, String condition, String answer) {
-        AlertDialog dialog = showFeedbackDialog();
+        currentLoadingDialog = showLoadingDialog();
 
         if (TEST_MODE) {
-            // ... (Test mode logic remains the same)
             return;
         }
 
@@ -234,6 +221,10 @@ public class MainTestActivity extends AppCompatActivity {
         geminiApiService.generateContent(apiKey, request).enqueue(new Callback<GeminiResponse>() {
             @Override
             public void onResponse(Call<GeminiResponse> call, Response<GeminiResponse> response) {
+                if (currentLoadingDialog != null && currentLoadingDialog.isShowing()) {
+                    currentLoadingDialog.dismiss();
+                }
+
                 if (response.isSuccessful() && response.body() != null && response.body().candidates != null && !response.body().candidates.isEmpty()) {
                     try {
                         String jsonText = response.body().candidates.get(0).content.parts.get(0).text;
@@ -242,28 +233,31 @@ public class MainTestActivity extends AppCompatActivity {
                         }
                         Gson gson = new Gson();
                         FeedbackJson feedback = gson.fromJson(jsonText, FeedbackJson.class);
-                        
-                        updateFeedbackDialog(dialog, feedback);
+
+                        showResultDialog(feedback);
                         saveEvaluationResult(questionId, condition, answer, feedback);
-                        
+
                     } catch (Exception e) {
                         e.printStackTrace();
-                        showErrorDialog(dialog, "결과 파싱 오류: " + e.getMessage());
+                        showErrorToast("결과 파싱 오류: " + e.getMessage());
                     }
                 } else {
-                    showErrorDialog(dialog, "API 오류: " + response.code());
+                    showErrorToast("API 오류: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<GeminiResponse> call, Throwable t) {
-                showErrorDialog(dialog, "네트워크 오류: " + t.getMessage());
+                if (currentLoadingDialog != null && currentLoadingDialog.isShowing()) {
+                    currentLoadingDialog.dismiss();
+                }
+                showErrorToast("네트워크 오류: " + t.getMessage());
             }
         });
     }
 
     private void saveEvaluationResult(String questionId, String condition, String userAnswer, FeedbackJson result) {
-        String userId = userPref.getString("userId", "unknown_user");
+        String userId = userPref.getString(MainActivity.USER_ID_KEY, "unknown_user");
 
         Map<String, Object> data = new HashMap<>();
         data.put("userId", userId);
@@ -274,7 +268,9 @@ public class MainTestActivity extends AppCompatActivity {
         data.put("example", result.example);
         data.put("timestamp", FieldValue.serverTimestamp());
 
-        // 세부 항목 점수 저장
+        data.put("condition", condition);
+        data.put("isPreTest", false);
+
         if (result.details != null) {
             for (FeedbackJson.ScoreItem item : result.details) {
                 String key = "unknown";
@@ -290,23 +286,41 @@ public class MainTestActivity extends AppCompatActivity {
 
         db.collection("evaluations")
                 .add(data)
-                .addOnSuccessListener(docRef -> Log.d(TAG, "Result saved with ID: " + docRef.getId()))
+                .addOnSuccessListener(docRef -> {
+                    Log.d(TAG, "Result saved with ID: " + docRef.getId());
+                    String currentUserId = userPref.getString(MainActivity.USER_ID_KEY, null);
+                    if (currentUserId != null) {
+                        new UserRepository().incrementAttemptAndScore(currentUserId, result.totalScore, new UserRepository.RankUpdateCallback() {
+                            @Override
+                            public void onRanksUpdated() {
+                                Log.d(TAG, "User stats and ranks updated.");
+                            }
+                        });
+                    }
+                })
                 .addOnFailureListener(e -> Log.e(TAG, "Error saving result", e));
     }
 
-    // === JSON 파싱용 클래스 ===
-    public static class FeedbackJson { 
+    private static class Question {
+        String id;
+        Map<String, Object> data;
+
+        Question(String id, Map<String, Object> data) {
+            this.id = id;
+            this.data = data;
+        }
+    }
+
+    public static class FeedbackJson {
         public int totalScore;
         public List<ScoreItem> details;
         public String summary, example;
-        
-        public static class ScoreItem { 
+
+        public static class ScoreItem {
             public String category, comment;
             public int score;
         }
     }
-
-    // === Dialog, View Control ... ===
 
     private void disableQuestion(int index) {
         etAnswers[index].setEnabled(false);
@@ -319,72 +333,69 @@ public class MainTestActivity extends AppCompatActivity {
         btnSubmits[index].setEnabled(true);
     }
 
-    private AlertDialog showFeedbackDialog() {
+    private AlertDialog showLoadingDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.feedback_dialog, null);
+
+        View view = getLayoutInflater().inflate(R.layout.loading_dialog, null);
         builder.setView(view);
-        view.findViewById(R.id.layoutLoading).setVisibility(View.VISIBLE);
-        view.findViewById(R.id.layoutResult).setVisibility(View.GONE);
+
         AlertDialog dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        Button btnClose = view.findViewById(R.id.btnClose);
-        btnClose.setOnClickListener(v -> dialog.dismiss());
+        dialog.setCancelable(false);
+
         dialog.show();
         return dialog;
     }
 
-    private void updateFeedbackDialog(AlertDialog dialog, FeedbackJson data) {
-        if (dialog != null && dialog.isShowing()) {
-            runOnUiThread(() -> {
-                TextView tvTotalScore = dialog.findViewById(R.id.tvTotalScore);
-                if (tvTotalScore == null) return;
+    private void showResultDialog(FeedbackJson data) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                tvTotalScore.setText(String.valueOf(data.totalScore));
+        View view = getLayoutInflater().inflate(R.layout.feedback_dialog, null);
+        builder.setView(view);
 
-                TextView[] tvItems = {
-                    dialog.findViewById(R.id.tvItem1),
-                    dialog.findViewById(R.id.tvItem2),
-                    dialog.findViewById(R.id.tvItem3),
-                    dialog.findViewById(R.id.tvItem4),
-                    dialog.findViewById(R.id.tvItem5)
-                };
+        TextView tvTotalScore = view.findViewById(R.id.tvTotalScore);
+        TextView tvFeedbackContent = view.findViewById(R.id.tvFeedbackContent);
+        TextView tvExample = view.findViewById(R.id.tvExample);
+        Button btnClose = view.findViewById(R.id.btnClose);
 
-                if (data.details != null) {
-                    for (int i = 0; i < Math.min(data.details.size(), 5); i++) {
-                        FeedbackJson.ScoreItem item = data.details.get(i);
-                        String text = String.format("%d. %s (%d점): %s", i + 1, item.category, item.score, item.comment);
-                        tvItems[i].setText(text);
-                    }
-                }
+        TextView[] tvItems = {
+                view.findViewById(R.id.tvItem1),
+                view.findViewById(R.id.tvItem2),
+                view.findViewById(R.id.tvItem3),
+                view.findViewById(R.id.tvItem4),
+                view.findViewById(R.id.tvItem5)
+        };
 
-                ((TextView) dialog.findViewById(R.id.tvFeedbackContent)).setText(data.summary);
-                ((TextView) dialog.findViewById(R.id.tvExample)).setText(data.example);
+        if (tvTotalScore != null) tvTotalScore.setText(String.valueOf(data.totalScore));
+        if (tvFeedbackContent != null) tvFeedbackContent.setText(data.summary);
+        if (tvExample != null) tvExample.setText(data.example);
 
-                dialog.findViewById(R.id.layoutLoading).setVisibility(View.GONE);
-                dialog.findViewById(R.id.layoutResult).setVisibility(View.VISIBLE);
-            });
+        if (data.details != null) {
+            for (int i = 0; i < Math.min(data.details.size(), 5); i++) {
+                FeedbackJson.ScoreItem item = data.details.get(i);
+                String text = String.format("%d. %s (%d점): %s", i + 1, item.category, item.score, item.comment);
+                if (tvItems[i] != null) tvItems[i].setText(text);
+            }
         }
+
+        View layoutLoading = view.findViewById(R.id.layoutLoading);
+        View layoutResult = view.findViewById(R.id.layoutResult);
+
+        if (layoutLoading != null) layoutLoading.setVisibility(View.GONE);
+        if (layoutResult != null) layoutResult.setVisibility(View.VISIBLE);
+
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        btnClose.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
-    private void showErrorDialog(AlertDialog dialog, String errorMsg) {
-        if (dialog != null && dialog.isShowing()) {
-            runOnUiThread(() -> {
-                LinearLayout layoutLoading = dialog.findViewById(R.id.layoutLoading);
-                // ID가 없을 수 있으므로 안전하게 찾습니다.
-                TextView tvLoadingText = layoutLoading.findViewById(R.id.tvLoadingText); 
-                View progressBar = layoutLoading.findViewById(R.id.progressBar);
-                if (progressBar != null) progressBar.setVisibility(View.GONE);
-                
-                // 만약 tvLoadingText가 없다면, Toast로 대체
-                if (tvLoadingText != null) {
-                    tvLoadingText.setText(errorMsg);
-                    tvLoadingText.setTextColor(Color.RED);
-                } else {
-                    Toast.makeText(MainTestActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-                    dialog.dismiss();
-                }
-            });
-        }
+    private void showErrorToast(String errorMsg) {
+        runOnUiThread(() -> {
+            Toast.makeText(MainTestActivity.this, "오류 발생: " + errorMsg, Toast.LENGTH_LONG).show();
+        });
     }
 
     private void startCountdownTimer() {

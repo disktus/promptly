@@ -75,15 +75,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 로그아웃 버튼 클릭 이벤트를 테스트 화면 이동/로그아웃으로 재활용
+        // 로그아웃 버튼 클릭 이벤트를 설정
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (prefs.getString(NICKNAME_KEY, null) != null) {
-                    checkTestStatusAndNavigate(prefs.getString(USER_ID_KEY, null));
-                } else {
-                    logout();
-                }
+                // 로그아웃 기능만 수행
+                logout();
             }
         });
     }
@@ -94,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         String userId = prefs.getString(USER_ID_KEY, null);
 
         if (nickname != null && userId != null) {
+            // 💡 로그인된 상태라면, 테스트 완료 여부 확인 후 적절한 화면으로 이동
             checkTestStatusAndNavigate(userId);
         } else {
             showLoginView();
@@ -113,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onUserIdFound(String userId) {
                             if (userId != null) {
                                 saveNicknameAndLogin(nickname, userId);
-                                Toast.makeText(MainActivity.this, "로그인되었습니다!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, nickname + "님, 환영합니다!", Toast.LENGTH_SHORT).show();
+                                // 테스트 상태 확인 후 분기
                                 checkTestStatusAndNavigate(userId);
                             } else {
                                 Toast.makeText(MainActivity.this, "사용자 정보를 가져올 수 없습니다.", Toast.LENGTH_SHORT).show();
@@ -128,11 +127,12 @@ public class MainActivity extends AppCompatActivity {
                         public void onUserIdFound(String userId) {
                             if (userId != null) {
                                 saveNicknameAndLogin(nickname, userId);
-                                Toast.makeText(MainActivity.this, "닉네임이 생성되었습니다!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "환영합니다! " + nickname + "님!", Toast.LENGTH_SHORT).show();
+                                // 신규 유저는 환영 화면 (WelcomeActivity)으로 이동
                                 startWelcomeActivity(nickname);
                             } else {
                                 Log.e(TAG, "Error creating new user.");
-                                Toast.makeText(MainActivity.this, "닉네임이 생성되었습니다!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -157,12 +157,25 @@ public class MainActivity extends AppCompatActivity {
 
     // 유저의 테스트 완료 상태를 확인하고 적절한 화면으로 이동
     private void checkTestStatusAndNavigate(String userId) {
+        // 로컬 SharedPreferences에서 완료 상태를 확인
+        boolean isCompletedLocally = prefs.getBoolean(PRETEST_COMPLETED_KEY, false);
+
+        if (isCompletedLocally) {
+            // 로컬에 완료 기록이 있으면 MainTestActivity로 이동
+            startMainTestActivity();
+            return;
+        }
+
+        // 로컬에 완료 기록이 없으면 Firestore에서 최종 확인
         userRepository.isPreTestCompleted(userId, new UserRepository.PreTestStatusCallback() {
             @Override
             public void onStatusChecked(boolean isCompleted) {
                 if (isCompleted) {
+                    // Firestore에 완료 기록이 있으면 로컬 저장 후 MainTestActivity로 이동
+                    prefs.edit().putBoolean(PRETEST_COMPLETED_KEY, true).apply();
                     startMainTestActivity();
                 } else {
+                    // Firestore에 완료 기록이 없으면 PreTestActivity로 이동 (필수 테스트)
                     startPreTestActivity();
                 }
             }
@@ -171,25 +184,24 @@ public class MainActivity extends AppCompatActivity {
 
     // SharedPreferences 정보를 삭제하고 로그인 화면으로 전환
     private void logout() {
-        // SharedPreferences 정보를 삭제하고 로그인 화면으로 전환
         SharedPreferences.Editor editor = prefs.edit();
+        // 모든 사용자 정보 삭제
+        editor.remove(NICKNAME_KEY);
+        editor.remove(USER_ID_KEY);
+        editor.remove(PRETEST_COMPLETED_KEY);
+        editor.clear(); // 안전하게 모든 prefs를 지움
         editor.apply();
 
         showLoginView();
         Toast.makeText(this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
     }
 
-    // 프로필 뷰를 보이게 설정
-    private void showProfileView(String nickname) {
-        loginView.setVisibility(View.GONE);
-        profileView.setVisibility(View.VISIBLE);
-        welcomeText.setText("안녕하세요, " + nickname + "님!");
-    }
-
-    // 로그인 뷰를 보이게 설정
+    // 로그인 뷰를 보이게 설정 (화면 재구성)
     private void showLoginView() {
         profileView.setVisibility(View.GONE);
         loginView.setVisibility(View.VISIBLE);
+        nicknameEditText.setText("");
+        nicknameEditText.requestFocus();
     }
 
     // WelcomeActivity (환영 화면)로 이동

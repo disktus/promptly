@@ -42,6 +42,12 @@ public class UserRepository {
         void onRanksUpdated();
     }
 
+    // 사용자 통계 데이터를 반환하기 위한 콜백 인터페이스
+    public interface UserStatsCallback {
+        void onStatsLoaded(long totalScore, long attempt, int scoreRank, int attemptRank, int totalUsers);
+        void onError(Exception e);
+    }
+
     // FirebaseFirestore 인스턴스를 초기화하고 컬렉션 참조 설정
     public UserRepository() {
         this.db = FirebaseFirestore.getInstance();
@@ -109,6 +115,27 @@ public class UserRepository {
                         callback.onStatusChecked(false);
                     }
                 });
+    }
+
+    // 사용자 통계 데이터를 로드하여 콜백으로 반환
+    public void loadUserStats(String userId, final UserStatsCallback callback) {
+        usersRef.document(userId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                DocumentSnapshot document = task.getResult();
+                long totalScore = document.getLong("totalScore") != null ? document.getLong("totalScore") : 0;
+                long attempt = document.getLong("attempt") != null ? document.getLong("attempt") : 0;
+                int scoreRank = document.getLong("scoreRank") != null ? document.getLong("scoreRank").intValue() : 0;
+                int attemptRank = document.getLong("attemptRank") != null ? document.getLong("attemptRank").intValue() : 0;
+
+                // 총 유저 수 계산 (랭크 퍼센트 계산용)
+                usersRef.get().addOnSuccessListener(querySnapshot -> {
+                    int totalUsers = querySnapshot.size();
+                    callback.onStatsLoaded(totalScore, attempt, scoreRank, attemptRank, totalUsers);
+                }).addOnFailureListener(e -> callback.onError(e));
+            } else {
+                callback.onError(task.getException());
+            }
+        });
     }
 
     // 유저의 시도 횟수와 총점을 증가시키고 순위 갱신 후 콜백 호출

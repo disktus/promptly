@@ -31,15 +31,15 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-                <include
-                    layout="@layout/question_layout"
-                    android:id="@+id/question1"/>
-                <include
-                    layout="@layout/question_layout"
-                    android:id="@+id/question2"/>
-                <include
-                    layout="@layout/question_layout"
-                    android:id="@+id/question3"/>
+            <include
+                layout="@layout/question_layout"
+                android:id="@+id/question1"/>
+            <include
+                layout="@layout/question_layout"
+                android:id="@+id/question2"/>
+            <include
+                layout="@layout/question_layout"
+                android:id="@+id/question3"/>
 
 
             <Button

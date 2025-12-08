@@ -25,11 +25,11 @@ public class WelcomeActivity extends AppCompatActivity {
         // 이전 액티비티에서 전달받은 닉네임 정보를 화면에 표시
         String nickname = getIntent().getStringExtra(EXTRA_NICKNAME);
         if (nickname != null) {
-            String message = "처음이시군요, " + nickname + "님!\n프롬프트 테스트를 시작해보세요.";
+            String message = "안녕하세요, " + nickname + "님!\nAI 프롬프팅 실력을 확인해보세요.";
             welcomeTextView.setText(message);
         } else {
             // 닉네임이 없을 경우를 대비한 기본 메시지
-            welcomeTextView.setText("환영합니다!\n프롬프트 테스트를 시작해보세요.");
+            welcomeTextView.setText("환영합니다!\nAI 프롬프팅 실력을 확인해보세요.");
         }
 
         // 테스트 시작 버튼 클릭 이벤트 설정

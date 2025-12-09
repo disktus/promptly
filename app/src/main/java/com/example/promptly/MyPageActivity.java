@@ -293,19 +293,16 @@ public class MyPageActivity extends AppCompatActivity {
     }
 
     public static class EvaluationResult {
-        private String userId;
-        private String questionId;
-        private String answer;
-        private Long totalScore = 0L;
-        private String summary;
-        private String example;
-        private String condition;
-
-        private Long fitness = 0L;
-        private Long clarity = 0L;
-        private Long context = 0L;
-        private Long structure = 0L;
-        private Long cot = 0L;
+        public Long fitness = 0L;
+        public Long clarity = 0L;
+        public Long context = 0L;
+        public Long structure = 0L;
+        public Long cot = 0L;
+        public Long totalScore = 0L;
+        public String summary;
+        public String example;
+        public String condition;
+        public String answer;
 
         public EvaluationResult() {}
 
@@ -313,14 +310,15 @@ public class MyPageActivity extends AppCompatActivity {
         public String getSummary() { return summary; }
         public String getExample() { return example; }
         public String getCondition() { return condition; }
+        public String getAnswer() { return answer; }
 
         public Map<String, Long> getDetailScores() {
             Map<String, Long> map = new HashMap<>();
-            map.put("fitness", fitness != null ? fitness : 0L);
-            map.put("clarity", clarity != null ? clarity : 0L);
-            map.put("context", context != null ? context : 0L);
-            map.put("structure", structure != null ? structure : 0L);
-            map.put("cot", cot != null ? cot : 0L);
+            map.put("fitness", this.fitness != null ? this.fitness : 0L);
+            map.put("clarity", this.clarity != null ? this.clarity : 0L);
+            map.put("context", this.context != null ? this.context : 0L);
+            map.put("structure", this.structure != null ? this.structure : 0L);
+            map.put("cot", this.cot != null ? this.cot : 0L);
             return map;
         }
     }

@@ -75,9 +75,12 @@ public class PreTestResultActivity extends AppCompatActivity {
 
         // 인텐트에서 점수 데이터 가져오기
         Intent intent = getIntent();
-        int totalScore_1500 = intent.getIntExtra(EXTRA_TOTAL_SCORE, 0);
+        // totalScore_100은 PreTestActivity에서 5개 항목(0~20점)의 합(0~100점)을 받음
+        int totalScore_100 = intent.getIntExtra(EXTRA_TOTAL_SCORE, 0);
         int[] itemScores_100 = intent.getIntArrayExtra(EXTRA_SCORES);
-        int finalDisplayScore = totalScore_1500 / 15;
+
+        // 총점 표시 점수 처리: 0~100점 만점을 그대로 사용
+        int finalDisplayScore = totalScore_100;
 
         // 점수 데이터 유효성 검사 및 기본값 설정
         if (itemScores_100 == null || itemScores_100.length != 5) {
@@ -123,11 +126,12 @@ public class PreTestResultActivity extends AppCompatActivity {
         else return Color.parseColor("#ed574c");
     }
 
-    // 항목별 막대그래프 애니메이션을 표시 (100점 만점 -> 20점 만점 비율로 변환)
+    // 항목별 막대그래프 애니메이션을 표시
     private void showBarChart(int[] scores_100) {
         // 항목별 점수를 막대그래프에 애니메이션으로 반영
         for (int i = 0; i < progressBars.length; i++) {
             int index = i;
+            // scores_100(100점 만점)을 ProgressBar의 max값(20점 만점 가정)에 맞게 5로 나눔
             int score_20 = scores_100[i] / 5;
 
             ValueAnimator animator = ValueAnimator.ofInt(0, score_20);

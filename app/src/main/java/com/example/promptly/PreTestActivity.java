@@ -54,6 +54,7 @@ public class PreTestActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 액티비티 생성 및 기본 초기화
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pre_test);
 
@@ -78,6 +79,7 @@ public class PreTestActivity extends AppCompatActivity {
     }
 
     private void initGeminiApi() {
+        // Gemini API 통신을 위한 Retrofit 및 OkHttpClient 초기화
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -98,6 +100,7 @@ public class PreTestActivity extends AppCompatActivity {
     }
 
     private void setupQuestionViews() {
+        // 화면의 질문 뷰(제목, 조건, 답변 입력창) 연결
         int[] questionIds = { R.id.question1, R.id.question2, R.id.question3 };
 
         for (int i = 0; i < 3; i++) {
@@ -110,6 +113,7 @@ public class PreTestActivity extends AppCompatActivity {
     }
 
     private void loadQuestionsFromDB() {
+        // Firebase에서 문제 로드 및 화면에 설정
         db.collection("questions")
                 .get()
                 .addOnSuccessListener(result -> {
@@ -151,6 +155,7 @@ public class PreTestActivity extends AppCompatActivity {
     }
 
     private void submitPreTest() {
+        // 모든 답변이 입력되었는지 확인 후 채점 시작
         for (EditText etAnswer : etAnswers) {
             if (etAnswer.getText().toString().trim().isEmpty()) {
                 Toast.makeText(this, "모든 문제에 답변을 입력하세요.", Toast.LENGTH_SHORT).show();
@@ -164,6 +169,7 @@ public class PreTestActivity extends AppCompatActivity {
     }
 
     private void calculateAndSaveResults() {
+        // 3개 문제의 조건과 답변을 합쳐 Gemini에게 보낼 프롬프트 생성
         StringBuilder combinedPrompt = new StringBuilder();
 
         for (int i = 0; i < 3; i++) {
@@ -180,6 +186,7 @@ public class PreTestActivity extends AppCompatActivity {
 
         String apiKey = GEMINI_API_KEY != null ? GEMINI_API_KEY.trim() : "";
 
+        // Gemini API 호출
         geminiApiService.generateContent(apiKey, request).enqueue(new Callback<GeminiResponse>() {
             @Override
             public void onResponse(Call<GeminiResponse> call, Response<GeminiResponse> response) {
@@ -193,12 +200,21 @@ public class PreTestActivity extends AppCompatActivity {
                         Gson gson = new Gson();
                         PreTestFeedback feedback = gson.fromJson(jsonText, PreTestFeedback.class);
 
+                        // 항목별 점수(0~20점)를 합산하여 최종 총점(0~100점 만점)을 계산한다.
+                        int calculatedTotalScore = 0;
+                        if (feedback.details != null && feedback.details.size() >= 5) {
+                            for (PreTestFeedback.ScoreItem item : feedback.details) {
+                                calculatedTotalScore += item.score;
+                            }
+                        }
+
                         markTestCompleted();
 
                         // itemScores_100 (5개 항목 각 100점 만점)을 최종 화면으로 전달
                         int[] itemScores_100 = convertItemScores(feedback.details);
-                        // 총점 100점을 그대로 전달
-                        navigateToResultScreen(feedback.totalScore, itemScores_100);
+
+                        // 직접 계산한 총점(0~100점 만점)을 결과 화면으로 전달
+                        navigateToResultScreen(calculatedTotalScore, itemScores_100);
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -221,6 +237,7 @@ public class PreTestActivity extends AppCompatActivity {
     }
 
     private String generateGeminiPrompt(String combinedConditionsAndAnswers) {
+        // Gemini에게 보낼 최종 프롬프트 (JSON 형식 요청)
         return "다음은 사용자가 3개의 문제에 대해 작성한 프롬프트 엔지니어링 답변입니다:\n" +
                 combinedConditionsAndAnswers +
                 "--- 지시 사항 ---\n" +
@@ -238,33 +255,10 @@ public class PreTestActivity extends AppCompatActivity {
                 "}";
     }
 
-    private void saveEvaluation(PreTestFeedback feedback) {
-        Map<String, Object> eval = new HashMap<>();
-        eval.put("userId", currentUserId);
-        eval.put("questionIds", loadedQuestionIds);
-        eval.put("totalScore", feedback.totalScore);
-        eval.put("timestamp", FieldValue.serverTimestamp());
-
-        eval.put("isPreTest", true); // PreTest 기록임을 명시하는 태그
-
-        for (PreTestFeedback.ScoreItem item : feedback.details) {
-            String key = item.category.split(" ")[0].toLowerCase();
-            eval.put(key, item.score);
-        }
-
-        StringBuilder conditions = new StringBuilder();
-        for (TextView tv : tvConditions) {
-            conditions.append(tv.getText().toString()).append("\n");
-        }
-        eval.put("condition", conditions.toString());
-
-        db.collection("evaluations").add(eval);
-    }
-
     private int[] convertItemScores(List<PreTestFeedback.ScoreItem> details) {
+        // 항목별 점수 (0~20점)를 0~100점 만점으로 변환
         int[] scores = new int[5];
 
-        // 5개 항목 순서대로 0~100점 기준으로 변환: AI는 0~20점을 반환하므로 5배를 곱함
         if (details != null && details.size() >= 5) {
             scores[0] = details.get(0).score * 5; // 목적 적합성 (Fitness)
             scores[1] = details.get(1).score * 5; // 명확성 (Clarity)
@@ -276,6 +270,7 @@ public class PreTestActivity extends AppCompatActivity {
     }
 
     private void markTestCompleted() {
+        // 테스트 완료 플래그 저장
         SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(MainActivity.PRETEST_COMPLETED_KEY, true);
@@ -283,6 +278,7 @@ public class PreTestActivity extends AppCompatActivity {
     }
 
     private void markTestCompletedAndGoMain() {
+        // 테스트 완료 후 메인 화면으로 이동 (에러 발생 시 사용)
         markTestCompleted();
         Intent mainIntent = new Intent(PreTestActivity.this, MainTestActivity.class);
         startActivity(mainIntent);
@@ -300,6 +296,7 @@ public class PreTestActivity extends AppCompatActivity {
     }
 
     private void navigateToResultScreen(int totalScore, int[] itemScores) {
+        // 결과 화면으로 이동
         Intent intent = new Intent(PreTestActivity.this, PreTestResultActivity.class);
         intent.putExtra("TOTAL_SCORE", totalScore);
         intent.putExtra("ITEM_SCORES", itemScores);

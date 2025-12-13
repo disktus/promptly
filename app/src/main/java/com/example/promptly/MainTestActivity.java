@@ -193,7 +193,8 @@ public class MainTestActivity extends AppCompatActivity {
             return;
         }
 
-        String prompt = "다음은 사용자가 작성한 프롬프트 엔지니어링 답변에 대한 조건입니다:\n" +
+        String prompt = "당신은 프롬프트 작성 실력 향상을 돕는 엄격하고 전문적인 AI 튜터 역할을 수행해 주십시오. " +
+                "당신의 임무는 아래 사용자가 작성한 프롬프트의 품질을 평가하는 것이며, **절대로 프롬프트가 요구하는 최종 결과물(예: 블로그 글, 기사 본문 등)을 작성해서는 안 됩니다.**\n\n" +
                 "--- 조건 ---\n" + condition + "\n\n" +
                 "--- 사용자 답변 ---\n" + answer + "\n\n" +
                 "--- 지시 사항 ---\n" +
@@ -209,7 +210,7 @@ public class MainTestActivity extends AppCompatActivity {
                 "    { \"category\": \"추론 유도 (CoT)\", \"score\": (0~20 정수), \"comment\": \"짧은 평가\" }\n" +
                 "  ],\n" +
                 "  \"summary\": \"총평 및 개선할 점 요약\",\n" +
-                "  \"example\": \"조건을 완벽하게 충족하는 모범 답안 (한국어)\"\n" +
+                "  \"example\": \"주어진 조건을 완벽하게 충족하며, 구체성과 명확성을 갖춘 **모범 프롬프트 예시**(한국어)\"\n" +
                 "}";
 
         List<Part> parts = new ArrayList<>();

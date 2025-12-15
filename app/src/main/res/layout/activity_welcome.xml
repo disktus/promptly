@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#a7c961"
+    android:background="@color/lightGreen"
     tools:context=".WelcomeActivity">
 
     <TextView
@@ -15,7 +15,7 @@
         android:text="안녕하세요, [유저닉네임]님!\nAI 프롬프팅 실력을 확인해보세요."
         android:textSize="22sp"
         android:gravity="center"
-        android:textColor="#363430"
+        android:textColor="@color/darkText"
         android:fontFamily="@font/seoul_alrim_bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btnStartTest"
@@ -31,8 +31,8 @@
         android:text="테스트 시작하기"
         android:paddingHorizontal="40dp"
         android:textSize="18sp"
-        android:backgroundTint="#ecf0e1"
-        android:textColor="#363430"
+        android:backgroundTint="@color/lightYellow"
+        android:textColor="@color/darkText"
         app:layout_constraintTop_toBottomOf="@id/tvWelcomeMessage"
         app:layout_constraintBottom_toTopOf="@id/tvdefinitionMessage"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:gravity="center"
-        android:textColor="#363430"
+        android:textColor="@color/darkText"
         android:text="AI 프롬프팅 (Prompting) : 인공지능에게 원하는\n결과를 얻기 위해 질문이나 명령을 입력하는 방법"
         android:fontFamily="@font/seoul_alrim_medium"
         android:lineSpacingMultiplier="1.2"

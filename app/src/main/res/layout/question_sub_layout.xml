@@ -13,7 +13,7 @@
         android:text="다음 조건을 만족하는 프롬프트를\n입력하세요."
         android:fontFamily="@font/seoul_alrim_bold"
         android:textSize="22sp"
-        android:textColor="#363430"/>
+        android:textColor="@color/darkText"/>
 
     <TextView
         android:id="@+id/tvConditions"
@@ -23,7 +23,7 @@
         android:fontFamily="@font/seoul_alrim_medium"
         android:layout_marginTop="6dp"
         android:textSize="18sp"
-        android:textColor="#363430"/>
+        android:textColor="@color/darkText"/>
 
     <EditText
         android:id="@+id/etAnswer"
@@ -35,7 +35,7 @@
         android:maxLength="300"
         android:hint="프롬프트를 입력하세요."
         android:fontFamily="@font/seoul_alrim_medium"
-        android:textColor="#363430"
+        android:textColor="@color/darkText"
         android:inputType="textMultiLine"
         android:layout_marginTop="8dp"/>
 
@@ -43,7 +43,7 @@
         android:id="@+id/btnSubmitOne"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#99ba54"
+        android:backgroundTint="@color/brightGreen"
         android:text="제출"
         android:layout_marginTop="10dp"
         android:layout_gravity="center"/>

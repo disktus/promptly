@@ -326,12 +326,18 @@ public class MainTestActivity extends AppCompatActivity {
     private void disableQuestion(int index) {
         etAnswers[index].setEnabled(false);
         btnSubmits[index].setEnabled(false);
-        btnSubmits[index].setBackgroundTintList(ColorStateList.valueOf(Color.LTGRAY));
+        btnSubmits[index].setBackgroundTintList(
+                ColorStateList.valueOf(getColor(R.color.grayDisabled))
+        );
+
     }
 
     private void enableQuestion(int index) {
         etAnswers[index].setEnabled(true);
         btnSubmits[index].setEnabled(true);
+        btnSubmits[index].setBackgroundTintList(
+                ColorStateList.valueOf(getColor(R.color.brightGreen))
+        );
     }
 
     private AlertDialog showLoadingDialog() {

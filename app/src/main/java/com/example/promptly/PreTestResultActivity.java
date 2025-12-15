@@ -29,13 +29,7 @@ public class PreTestResultActivity extends AppCompatActivity {
     private ProgressBar[] progressBars;
 
     // 점수 막대 색상 정의
-    private final int[] barColors = {
-            Color.parseColor("#add7a0"), // 명확성
-            Color.parseColor("#8ecf8c"), // 구체성
-            Color.parseColor("#6caf6b"), // 형식
-            Color.parseColor("#518a4f"), // 역할
-            Color.parseColor("#456f3e")  // 맥락
-    };
+    private int[] barColors;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +42,14 @@ public class PreTestResultActivity extends AppCompatActivity {
         tvFinalScore = findViewById(R.id.tv_final_score);
         tvMessage = findViewById(R.id.tv_message);
         ImageButton btnNext = findViewById(R.id.btn_next);
+
+        barColors = new int[] {
+                getColor(R.color.scoreClarity),
+                getColor(R.color.scoreSpecificity),
+                getColor(R.color.scoreFormat),
+                getColor(R.color.scoreRole),
+                getColor(R.color.scoreContext)
+        };
 
         // ProgressBar 배열 초기화
         progressBars = new ProgressBar[]{
@@ -64,7 +66,7 @@ public class PreTestResultActivity extends AppCompatActivity {
                     ColorStateList.valueOf(barColors[i])
             );
             progressBars[i].setProgressBackgroundTintList(
-                    ColorStateList.valueOf(Color.parseColor("#E0E0E0"))
+                    ColorStateList.valueOf(getColor(R.color.progressBackground))
             );
             progressBars[i].setProgress(0);
         }
@@ -120,10 +122,10 @@ public class PreTestResultActivity extends AppCompatActivity {
 
     // 점수에 따른 텍스트 색상을 결정
     private int getScoreColor(int score) {
-        if (score >= 90) return Color.parseColor("#66c255");
-        else if (score >= 75) return Color.parseColor("#52b2de");
-        else if (score >= 60) return Color.parseColor("#f2c43a");
-        else return Color.parseColor("#ed574c");
+        if (score >= 90) return getColor(R.color.scoreExcellent);
+        else if (score >= 75) return getColor(R.color.scoreGood);
+        else if (score >= 60) return getColor(R.color.scoreAverage);
+        else return getColor(R.color.scoreLow);
     }
 
     // 항목별 막대그래프 애니메이션을 표시

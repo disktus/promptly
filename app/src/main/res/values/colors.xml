@@ -2,4 +2,27 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="brightGreen">#99ba54</color>
+    <color name="lightGreen">#a7c961</color>
+    <color name="softGreen">#dce8a7</color>
+
+    <color name="warmYellow">#d9cf66</color>
+    <color name="lightYellow">#ecf0e1</color>
+
+    <color name="darkText">#363430</color>
+    <color name="lightText">#F4F1EA</color>
+    <color name="grayDisabled">#D3D3D3</color>
+
+    <color name="scoreClarity">#add7a0</color>      <!-- 명확성 -->
+    <color name="scoreSpecificity">#8ecf8c</color>  <!-- 구체성 -->
+    <color name="scoreFormat">#6caf6b</color>       <!-- 형식 -->
+    <color name="scoreRole">#518a4f</color>         <!-- 역할 -->
+    <color name="scoreContext">#456f3e</color>      <!-- 맥락 -->
+    <color name="progressBackground">#E0E0E0</color>
+
+    <color name="scoreExcellent">#66c255</color>
+    <color name="scoreGood">#52b2de</color>
+    <color name="scoreAverage">#f2c43a</color>
+    <color name="scoreLow">#ed574c</color>
 </resources>

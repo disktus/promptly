@@ -59,7 +59,7 @@
         android:textSize="14sp"
         android:text="로그인"
         android:fontFamily="@font/seoul_alrim_medium"
-        android:backgroundTint="#a7c961"
+        android:backgroundTint="@color/lightGreen"
         app:layout_constraintTop_toBottomOf="@id/nickname_edit_text"
         app:layout_constraintStart_toStartOf="@id/nickname_edit_text"
         app:layout_constraintEnd_toEndOf="@id/nickname_edit_text"/>
@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="로그아웃"
-        android:backgroundTint="#a7c961"
+        android:backgroundTint="@color/lightGreen"
         android:fontFamily="@font/seoul_alrim_medium"
         app:layout_constraintEnd_toEndOf="@+id/welcome_text"
         app:layout_constraintStart_toStartOf="@+id/welcome_text"

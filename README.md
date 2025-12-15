@@ -9,7 +9,7 @@ Markdown
 
 #### 1.루트 디렉토리의 local.properties에 api키 추가
 
-GEMINI_API_KEY=AIzaSyDMGN_dYpaq-AZsyrBVYJEqDw9O5Egj2G4
+GEMINI_API_KEY= (20231147@sungshin.ac.kr로 문의)
 
 #### 2. Functions 모듈 설치 및 빌드
 

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dce8a7">
+    android:background="@color/softGreen">
 
     <!-- 상단 헤더 -->
     <TextView
@@ -12,7 +12,7 @@
         android:text="오늘도 AI 프롬프트 실력 업!"
         android:textSize="22sp"
         android:fontFamily="@font/seoul_alrim_extrabold"
-        android:textColor="#F4F1EA"
+        android:textColor="@color/lightText"
         android:background="@drawable/rounded_bottom_header"
         android:elevation="6dp"
         android:paddingStart="20dp"
@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:text="다음 문제까지 12:00:00"
         android:textSize="14sp"
-        android:textColor="#363430"
+        android:textColor="@color/darkText"
         android:fontFamily="@font/seoul_alrim_medium"
         android:layout_alignParentEnd="true"
         android:layout_above="@id/bottomNav"

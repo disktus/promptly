@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:padding="14dp"
     android:orientation="vertical"
-    android:background="#ecf0e1"
+    android:background="@color/lightYellow"
     android:layout_marginBottom="12dp"
     android:elevation="4dp"
     android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         android:text="2025-12-01"
         android:fontFamily="@font/seoul_alrim_medium"
         android:textSize="12sp"
-        android:textColor="#363430"/>
+        android:textColor="@color/darkText"/>
 
     <!-- 조건 -->
     <LinearLayout
@@ -32,7 +32,7 @@
             android:text="상황: 과제"
             android:fontFamily="@font/seoul_alrim_medium"
             android:textSize="14sp"
-            android:textColor="#363430"/>
+            android:textColor="@color/darkText"/>
 
         <TextView
             android:id="@+id/tvHistoryRole"
@@ -41,7 +41,7 @@
             android:text=" / 직업: 대학생"
             android:fontFamily="@font/seoul_alrim_medium"
             android:textSize="14sp"
-            android:textColor="#363430"
+            android:textColor="@color/darkText"
             android:layout_marginStart="6dp"/>
 
         <TextView
@@ -51,7 +51,7 @@
             android:text=" / 작성물: 보고서"
             android:fontFamily="@font/seoul_alrim_medium"
             android:textSize="14sp"
-            android:textColor="#363430"
+            android:textColor="@color/darkText"
             android:layout_marginStart="6dp"/>
 
         <TextView
@@ -61,7 +61,7 @@
             android:text=" / 스타일: 객관적"
             android:fontFamily="@font/seoul_alrim_medium"
             android:textSize="14sp"
-            android:textColor="#363430"
+            android:textColor="@color/darkText"
             android:layout_marginStart="6dp"/>
     </LinearLayout>
 

@@ -4,7 +4,6 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -43,21 +42,23 @@ public class PreTestResultActivity extends AppCompatActivity {
         tvMessage = findViewById(R.id.tv_message);
         ImageButton btnNext = findViewById(R.id.btn_next);
 
-        barColors = new int[] {
-                getColor(R.color.scoreClarity),
-                getColor(R.color.scoreSpecificity),
-                getColor(R.color.scoreFormat),
-                getColor(R.color.scoreRole),
-                getColor(R.color.scoreContext)
+        // 채점 항목별 색상 (PreTestActivity의 convertItemScores 순서와 일치)
+        barColors = new int[]{
+                getColor(R.color.scoreFitness),    // 목적 적합성 (Fitness)
+                getColor(R.color.scoreClarity),    // 명확성 (Clarity)
+                getColor(R.color.scoreContext),    // 맥락/배경 (Context)
+                getColor(R.color.scoreStructure),  // 형식/구조 (Structure)
+                getColor(R.color.scoreCot)         // 추론 유도 (CoT)
         };
 
         // ProgressBar 배열 초기화
+        // index 0~4가 각각 Fitness / Clarity / Context / Structure / CoT 를 의미함
         progressBars = new ProgressBar[]{
+                findViewById(R.id.progress_fitness),
                 findViewById(R.id.progress_clarity),
-                findViewById(R.id.progress_specificity),
-                findViewById(R.id.progress_logic),
-                findViewById(R.id.progress_creativity),
-                findViewById(R.id.progress_context)
+                findViewById(R.id.progress_context),
+                findViewById(R.id.progress_structure),
+                findViewById(R.id.progress_cot)
         };
 
         // ProgressBar 색상 초기 설정
@@ -77,7 +78,7 @@ public class PreTestResultActivity extends AppCompatActivity {
 
         // 인텐트에서 점수 데이터 가져오기
         Intent intent = getIntent();
-        // totalScore_100은 PreTestActivity에서 5개 항목(0~20점)의 합(0~100점)을 받음
+        // totalScore_100은 PreTestActivity에서 계산된 0~100 점수
         int totalScore_100 = intent.getIntExtra(EXTRA_TOTAL_SCORE, 0);
         int[] itemScores_100 = intent.getIntArrayExtra(EXTRA_SCORES);
 
@@ -86,7 +87,9 @@ public class PreTestResultActivity extends AppCompatActivity {
 
         // 점수 데이터 유효성 검사 및 기본값 설정
         if (itemScores_100 == null || itemScores_100.length != 5) {
-            Toast.makeText(this, "점수 데이터 로드에 실패했습니다. 기본값으로 표시합니다.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,
+                    "점수 데이터 로드에 실패했습니다. 기본값으로 표시합니다.",
+                    Toast.LENGTH_LONG).show();
             itemScores_100 = new int[]{50, 50, 50, 50, 50};
             finalDisplayScore = 50;
         }

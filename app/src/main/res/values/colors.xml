@@ -14,11 +14,13 @@
     <color name="lightText">#F4F1EA</color>
     <color name="grayDisabled">#D3D3D3</color>
 
-    <color name="scoreClarity">#add7a0</color>      <!-- 명확성 -->
-    <color name="scoreSpecificity">#8ecf8c</color>  <!-- 구체성 -->
-    <color name="scoreFormat">#6caf6b</color>       <!-- 형식 -->
-    <color name="scoreRole">#518a4f</color>         <!-- 역할 -->
-    <color name="scoreContext">#456f3e</color>      <!-- 맥락 -->
+    <color name="PTResultBackground">#bdcf72</color>
+
+    <color name="scoreFitness">#add7a0</color>      <!-- 목적 적합성 -->
+    <color name="scoreClarity">#8ecf8c</color>  <!-- 명확성 -->
+    <color name="scoreContext">#6caf6b</color>       <!-- 맥락/배경 -->
+    <color name="scoreStructure">#518a4f</color>         <!-- 형식/구조 -->
+    <color name="scoreCot">#456f3e</color>      <!-- 추론 유도 -->
     <color name="progressBackground">#E0E0E0</color>
 
     <color name="scoreExcellent">#66c255</color>

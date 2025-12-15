@@ -4,7 +4,7 @@
     android:padding="24dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#bdcf72">
+    android:background="@color/PTResultBackground">
 
     <!-- 결과 텍스트 -->
     <TextView
@@ -64,6 +64,31 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:text="적합성"
+                    android:fontFamily="@font/seoul_alrim_bold"
+                    android:textColor="@color/darkText"
+                    android:textSize="32sp"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.4"
+                    android:layout_height="wrap_content"/>
+
+                <ProgressBar
+                    android:id="@+id/progress_fitness"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.6"
+                    android:layout_height="40dp"
+                    android:scaleY="6"
+                    android:progress="0"
+                    android:max="20"/>
+            </LinearLayout>
+
+            <LinearLayout android:orientation="horizontal"
+                android:layout_marginVertical="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
                     android:text="명확성"
                     android:fontFamily="@font/seoul_alrim_bold"
                     android:textColor="@color/darkText"
@@ -89,7 +114,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="구체성"
+                    android:text="맥락"
                     android:fontFamily="@font/seoul_alrim_bold"
                     android:textColor="@color/darkText"
                     android:textSize="32sp"
@@ -98,7 +123,7 @@
                     android:layout_height="wrap_content"/>
 
                 <ProgressBar
-                    android:id="@+id/progress_specificity"
+                    android:id="@+id/progress_context"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="0dp"
                     android:layout_weight="0.6"
@@ -123,7 +148,7 @@
                     android:layout_height="wrap_content"/>
 
                 <ProgressBar
-                    android:id="@+id/progress_logic"
+                    android:id="@+id/progress_structure"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="0dp"
                     android:layout_weight="0.6"
@@ -139,7 +164,7 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="역할"
+                    android:text="추론"
                     android:fontFamily="@font/seoul_alrim_bold"
                     android:textColor="@color/darkText"
                     android:textSize="32sp"
@@ -148,32 +173,7 @@
                     android:layout_height="wrap_content"/>
 
                 <ProgressBar
-                    android:id="@+id/progress_creativity"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.6"
-                    android:layout_height="40dp"
-                    android:scaleY="6"
-                    android:progress="0"
-                    android:max="20"/>
-            </LinearLayout>
-
-            <LinearLayout android:orientation="horizontal"
-                android:layout_marginVertical="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="맥락"
-                    android:fontFamily="@font/seoul_alrim_bold"
-                    android:textColor="@color/darkText"
-                    android:textSize="32sp"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.4"
-                    android:layout_height="wrap_content"/>
-
-                <ProgressBar
-                    android:id="@+id/progress_context"
+                    android:id="@+id/progress_cot"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="0dp"
                     android:layout_weight="0.6"

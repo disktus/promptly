@@ -7,7 +7,11 @@ Markdown
 만약 PATH 경로를 못잡을 시
 -> 시스템 환경 변수 편집 > 환경 변수 > 시스템 변수에서 PATH 찾아 클릭 > 새로 만들기 > jdk-25.0.1.8(버전은 다를 수 있음, jdk-버전)/bin 경로 복사 후 추가
 
-#### 1. Functions 모듈 설치 및 빌드
+#### 1.루트 디렉토리의 local.properties에 api키 추가
+
+GEMINI_API_KEY=AIzaSyDMGN_dYpaq-AZsyrBVYJEqDw9O5Egj2G4
+
+#### 2. Functions 모듈 설치 및 빌드
 
 프로젝트 루트 디렉토리에서 아래 명령어를 순서대로 실행해 서버 코드를 준비
 
